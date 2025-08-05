@@ -1,0 +1,14 @@
+.playlist-card .play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.playlist-card:hover .play-overlay {
+  opacity: 1;
+}

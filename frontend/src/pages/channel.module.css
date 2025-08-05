@@ -1,0 +1,13 @@
+.multiLineTruncate {
+    display: -webkit-box;
+    display: box; /* fallback */
+    line-clamp: 2; /* for future support */
+    -webkit-line-clamp: 2; /* works now */
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4em;
+    max-height: 2.8em;
+  }
+  
