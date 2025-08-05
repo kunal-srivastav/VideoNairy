@@ -3,7 +3,7 @@ import {GrPrevious, GrNext } from "../assets/Icons";
 import { Link } from "react-router-dom"
 import { useDispatch, useSelector } from 'react-redux';
 import { likedVideos } from '../features/likes/likeThunks';
-import VideoCard from './videoCard';
+import VideoCard from './VideoCard';
 import { userWatchHistory } from '../features/users/userThunks';
 
 function Channel() {
