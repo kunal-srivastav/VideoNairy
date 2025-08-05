@@ -2,7 +2,7 @@ import { logoutUser, refreshToken } from "../users/userThunks";
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "https://video-nairy.onrender.com", // Replace with your API
+  baseURL: import.meta.env.VITE_API_URL, // Replace with your API
   withCredentials: true, // Optional: if you're using cookies
 });
 
