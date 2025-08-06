@@ -19,7 +19,7 @@ function Sidebar() {
         <IoReorderThreeOutline size={30} color='white' />
       </button>
         <div className="ms-4 fw-bold">
-        <img src="./videoNairy_logo.png" width={30} alt="YouTube Logo" />
+        <img src="/videoNairy_logo.png" width={30} alt="YouTube Logo" />
         VideoNairy
         <span className="position-relative pb-2 translate-middle badge text-secondary" style={{"fontSize": "x-small"}}>
           IN

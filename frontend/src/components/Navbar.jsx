@@ -35,7 +35,7 @@ function Navbar() {
 
         {/* Logo */}
         <Link to="/" className="navbar-brand d-flex align-items-center gap-1">
-          <img src="./videoNairy_logo.png" width={30} alt="YouTube Logo" />
+          <img src="/videoNairy_logo.png" width={30} alt="YouTube Logo" />
           <div className="fw-bold position-relative">
             VideoNairy
             <span className="position-absolute top-0 start-100 translate-middle badge bg-secondary" style={{ fontSize: "0.6rem" }}>
