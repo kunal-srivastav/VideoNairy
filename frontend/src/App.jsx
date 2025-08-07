@@ -43,10 +43,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (document.cookie) {
-      dispatch(currentUser());
-    }
-  }, [dispatch]);
+    dispatch(currentUser());
+  }, []);
 
   return (
     <div className="container-fluid">
