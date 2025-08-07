@@ -1,3 +1,4 @@
+const { cookieOptions } = require("../../../HelloChatter/backend/utlis/cookieOptions");
 const { generateAccessAndRefreshToken } = require("../middleWares/generaterTokens");
 const userModel = require("../models/userModel");
 const {uploadOnCloudinary, deleteImgOnCloudinary} = require("../utlis/cloudinary");
@@ -27,8 +28,8 @@ module.exports.registerUser = async (req, res) => {
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(createdUser);
         return res
         .status(200)
-        .cookie("accessToken", accessToken)
-        .cookie("refreshToken", refreshToken)
+        .cookie("accessToken", accessToken, cookieOptions.accessToken)
+        .cookie("refreshToken", refreshToken, cookieOptions.refreshToken)
         .json("Account created successfully!");
     } catch (err) {
     return res.status(500).json(`Account creation failed ${err.message}`);
@@ -52,18 +53,8 @@ module.exports.loginUser = async (req, res) => {
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user);
         return res
         .status(200)
-        .cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "None",
-            maxAge: 15 * 60 * 1000
-        })
-        .cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "None",
-            maxAge: 15 * 60 * 1000
-        })
+        .cookie("accessToken", accessToken, cookieOptions.accessToken)
+        .cookie("refreshToken", refreshToken, cookieOptions.refreshToken)
         .json({message: "Successfully loggedIn"});
     } catch (err) {
         return res.status(500).json({message: err.message})
@@ -74,8 +65,8 @@ module.exports.logOut = async (req, res) => {
     await userModel.findOneAndUpdate({email: req.user.email}, {$unset: {refreshToken: 1}}, {new: true});
     return res
     .status(200)
-    .clearCookie("accessToken")
-    .clearCookie("refreshToken")
+    .clearCookie("accessToken", cookieOptions.accessToken)
+    .clearCookie("refreshToken", cookieOptions.refreshToken)
     .json("User logout")
 };
 
@@ -93,8 +84,8 @@ module.exports.refreshToken = async(req, res) => {
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user);
         res
         .status(200)
-        .cookie("accessToken", accessToken)
-        .cookie("refreshToken", refreshToken)
+        .cookie("accessToken", accessToken, cookieOptions.accessToken)
+        .cookie("refreshToken", refreshToken, cookieOptions.refreshToken)
         .json("Access token is refreshed");
     } catch (err) {
         return res.status(401).json(`Invalid refresh token ${err.message}`);
@@ -139,8 +130,8 @@ module.exports.updateAcountDetails = async (req, res) => {
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(updatedUser);
     return res
     .status(200)
-    .cookie("accessToken", accessToken)
-    .cookie("refreshToken", refreshToken)
+    .cookie("accessToken", accessToken, cookieOptions.accessToken)
+    .cookie("refreshToken", refreshToken, cookieOptions.refreshToken)
     .json({
         message: "successfully updated",
         updatedUser
