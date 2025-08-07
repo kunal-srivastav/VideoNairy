@@ -52,7 +52,11 @@ module.exports.loginUser = async (req, res) => {
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user);
         return res
         .status(200)
-        .cookie("accessToken", accessToken)
+        .cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "None"
+        })
         .cookie("refreshToken", refreshToken)
         .json({message: "Successfully loggedIn"});
     } catch (err) {
