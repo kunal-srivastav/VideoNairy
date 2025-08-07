@@ -55,9 +55,15 @@ module.exports.loginUser = async (req, res) => {
         .cookie("accessToken", accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "None"
+            sameSite: "None",
+            maxAge: 15 * 60 * 1000
         })
-        .cookie("refreshToken", refreshToken)
+        .cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "None",
+            maxAge: 15 * 60 * 1000
+        })
         .json({message: "Successfully loggedIn"});
     } catch (err) {
         return res.status(500).json({message: err.message})
