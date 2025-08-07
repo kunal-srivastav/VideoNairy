@@ -1,4 +1,4 @@
-const { cookieOptions } = require("../../../HelloChatter/backend/utlis/cookieOptions");
+const { cookieOptions } = require("../utlis/cookieOptions");
 const { generateAccessAndRefreshToken } = require("../middleWares/generaterTokens");
 const userModel = require("../models/userModel");
 const {uploadOnCloudinary, deleteImgOnCloudinary} = require("../utlis/cloudinary");
