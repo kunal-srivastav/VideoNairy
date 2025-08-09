@@ -80,7 +80,7 @@ module.exports.refreshToken = async(req, res) => {
         const user = await userModel.findOne({email: decodedToken.email});
         if(!user) return res.status(401).json("Invalid refresh token");
 
-        if(incomingRefreshToken !== user.refreshToken) return res.status().json("Refresh Token is expired or used");
+        if(incomingRefreshToken !== user.refreshToken) return res.status(403).json("Refresh Token is expired or used");
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user);
         res
         .status(200)
