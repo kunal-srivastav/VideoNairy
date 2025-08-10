@@ -3,22 +3,30 @@ const { uploadOnCloudinary, deleteImgOnCloudinary } = require("../utlis/cloudina
 
 module.exports.createUserPost = async (req, res) => {
     try {
-        const imageLocalPath = req.file? req.file.path : "";
-        if(!imageLocalPath) return res.status(400).json("post Image is required");
+        const imageLocalPath = req.file ? req.file.path : "";
+        if (!imageLocalPath) {
+            return res.status(400).json({ message: "Post image is required" });
+        }
 
         const post = await uploadOnCloudinary(imageLocalPath);
-        
-        const createPost = await postModel.create({postImage: post.url, postBy: req.user._id});
-        return res
-        .status(201)
-        .json({
+        if (!post || !post.url) {
+            return res.status(400).json({ message: "Error uploading image" });
+        }
+
+        const createPost = await postModel.create({
+            postImage: post.url,
+            postBy: req.user._id
+        });
+
+        return res.status(201).json({
             message: "Post created successfully",
             createPost
-        })
+        });
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({ message: `Internal server error: ${error.message}` });
     }
 };
+
 
 module.exports.updateUserPost = async (req, res) => {
     try {
