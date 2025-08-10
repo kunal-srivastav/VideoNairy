@@ -6,8 +6,14 @@ export const axiosInstance = axios.create({
   withCredentials: true
 });
 
+let responseInterceptorId;
+
 export const SetupInterceptor = (dispatch) => {
-  axiosInstance.interceptors.response.use(
+  if (responseInterceptorId !== undefined) {
+    axiosInstance.interceptors.response.eject(responseInterceptorId);
+  }
+
+  responseInterceptorId = axiosInstance.interceptors.response.use(
     (res) => res,
     async (error) => {
       const originalRequest = error.config;
