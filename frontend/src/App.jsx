@@ -40,8 +40,13 @@ function App() {
 
   useEffect(() => {
     SetupInterceptor(dispatch);
-    dispatch(currentUser());
   }, []);
+
+  useEffect(() => {
+    if(loggedInUser) {
+    dispatch(currentUser());
+    }
+  }, [loggedInUser])
 
   return (
     <div className="container-fluid">
