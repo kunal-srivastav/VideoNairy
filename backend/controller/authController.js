@@ -72,7 +72,7 @@ module.exports.logOut = async (req, res) => {
 
 module.exports.refreshToken = async(req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
-    if(!incomingRefreshToken) return res.status(500).json("unauthorized request");
+    if(!incomingRefreshToken) return res.status(401).json("unauthorized request");
     try {
         // Token decode
         const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -88,7 +88,7 @@ module.exports.refreshToken = async(req, res) => {
         .cookie("refreshToken", refreshToken, cookieOptions.refreshToken)
         .json("Access token is refreshed");
     } catch (err) {
-        return res.status(401).json(`Invalid refresh token ${err.message}`);
+        return res.status(403).json({ message: "Refresh token expired or invalid" });
     }
 };
 
@@ -112,7 +112,7 @@ module.exports.changeCurrentPassword = async(req, res) => {
 
 module.exports.getCurrentUser = async (req, res) => {
     try {
-        return await res
+        return res
         .status(200)
         .json({
             message: "successfully get current user",
