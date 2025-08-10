@@ -2,16 +2,14 @@ import { logoutUser, refreshToken } from "../users/userThunks";
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // Replace with your API
-  withCredentials: true, // Optional: if you're using cookies
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true
 });
 
 export const SetupInterceptor = (dispatch) => {
   axiosInstance.interceptors.response.use(
-    res => {
-      return res;
-    },
-    async error => {
+    (res) => res,
+    async (error) => {
       const originalRequest = error.config;
 
       if (!error?.response) {
@@ -30,7 +28,8 @@ export const SetupInterceptor = (dispatch) => {
           return Promise.reject(err);
         }
       }
+
       return Promise.reject(error);
     }
-  )
-}
+  );
+};

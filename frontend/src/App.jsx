@@ -22,7 +22,6 @@ import PlaylistPlayer from './pages/PlaylistPlayer';
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import { SetupInterceptor } from './features/utils/SetupInterceptor';
 import { currentUser } from './features/users/userThunks';
 
 function App() {
@@ -39,12 +38,8 @@ function App() {
   const hideLayout = hideLayoutPaths.includes(location.pathname);
 
   useEffect(() => {
-    SetupInterceptor(dispatch);
-  }, []);
-
-  useEffect(() => {
     dispatch(currentUser());
-  }, [])
+  }, []);
 
   return (
     <div className="container-fluid">
