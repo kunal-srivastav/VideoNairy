@@ -37,9 +37,9 @@ function App() {
   ];
   const hideLayout = hideLayoutPaths.includes(location.pathname);
 
-  // useEffect(() => {
-  //   // dispatch(currentUser());
-  // }, []);
+  useEffect(() => {
+    dispatch(currentUser());
+  }, []);
 
   return (
     <div className="container-fluid">
