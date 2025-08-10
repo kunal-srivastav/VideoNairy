@@ -39,12 +39,9 @@ function App() {
   const hideLayout = hideLayoutPaths.includes(location.pathname);
 
   useEffect(() => {
-    SetupInterceptor(dispatch);
-  }, []);
-
-  useEffect(() => {
     dispatch(currentUser());
-  }, []);
+    SetupInterceptor(dispatch);
+  }, [dispatch]);
 
   return (
     <div className="container-fluid">
