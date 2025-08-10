@@ -8,6 +8,8 @@ module.exports.createUserPost = async (req, res) => {
             return res.status(400).json({ message: "Post image is required" });
         }
 
+        console.log("image local path ", imageLocalPath);
+
         const post = await uploadOnCloudinary(imageLocalPath);
         console.log(post)
         if (!post || !post.url) {
