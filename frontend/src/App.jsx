@@ -40,8 +40,11 @@ function App() {
 
   useEffect(() => {
     SetupInterceptor(dispatch);
+  }, []);
+
+  useEffect(() => {
     dispatch(currentUser());
-  }, [dispatch]);
+  }, [])
 
   return (
     <div className="container-fluid">
