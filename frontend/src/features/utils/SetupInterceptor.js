@@ -2,15 +2,15 @@ import { logoutUser, refreshToken } from "../users/userThunks";
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+  baseURL: import.meta.env.VITE_API_URL, // Replace with your API
+  withCredentials: true, // Optional: if you're using cookies
 });
-
-let refreshTokenPromise = null;
 
 export const SetupInterceptor = (dispatch) => {
   axiosInstance.interceptors.response.use(
-    res => res,
+    res => {
+      return res;
+    },
     async error => {
       const originalRequest = error.config;
 
@@ -18,19 +18,11 @@ export const SetupInterceptor = (dispatch) => {
         return Promise.reject(error);
       }
 
-      if (error.response.status === 401 && !originalRequest._retry) {
+      if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
 
-        // If a refresh is already happening, wait for it
-        if (!refreshTokenPromise) {
-          refreshTokenPromise = dispatch(refreshToken()).unwrap()
-            .finally(() => {
-              refreshTokenPromise = null; // Reset after it resolves/rejects
-            });
-        }
-
         try {
-          await refreshTokenPromise;
+          await dispatch(refreshToken()).unwrap();
           return axiosInstance(originalRequest);
         } catch (err) {
           dispatch(logoutUser());
@@ -38,8 +30,7 @@ export const SetupInterceptor = (dispatch) => {
           return Promise.reject(err);
         }
       }
-
       return Promise.reject(error);
     }
-  );
-};
+  )
+}
