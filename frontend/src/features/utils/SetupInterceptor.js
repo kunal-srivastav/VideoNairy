@@ -6,17 +6,20 @@ export const axiosInstance = axios.create({
   withCredentials: true
 });
 
+let interceptorAttached = false;
+
 export const SetupInterceptor = (dispatch) => {
+  if (interceptorAttached) return;
+  interceptorAttached = true;
+
   axiosInstance.interceptors.response.use(
     (res) => res,
     async (error) => {
       const originalRequest = error.config;
 
-      if (!error?.response) {
-        return Promise.reject(error);
-      }
+      if (!error?.response) return Promise.reject(error);
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
 
         try {
