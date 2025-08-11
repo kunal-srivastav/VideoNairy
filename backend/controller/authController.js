@@ -19,10 +19,11 @@ module.exports.registerUser = async (req, res) => {
         // upload them to cloudinary, avatar and coverImage
         const avatar = await uploadOnCloudinary(avatarLocalPath);
         const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+        console.log(avatar);
     
         if(!avatar) return res.status(400).json("Avatar image is required");
     
-        const createdUser = await userModel.create({fullName, userName: userName.toLowerCase(), email, password, avatar: avatar.url, coverImage: coverImage?.url || ""})
+        const createdUser = await userModel.create({fullName, userName: userName.toLowerCase(), email, password, avatar: avatar.secure_url, coverImage: coverImage?.secure_url || ""})
     
         // generate access and refresh token
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(createdUser);
