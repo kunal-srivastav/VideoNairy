@@ -1,4 +1,4 @@
-const cloudinary = require("cloudinary")
+const {v2: cloudinary} = require("cloudinary")
 const fs = require("fs");
 
 // Configuration
@@ -12,7 +12,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     try {
         console.log("local path", localFilePath);
         if(!localFilePath) return null;
-        const response = await cloudinary.v2.uploader.upload(localFilePath, {resource_type: "auto"});
+        const response = await cloudinary.uploader.upload(localFilePath, {resource_type: "auto"});
         // file has been uploaded successfully
         fs.unlinkSync(localFilePath);
         return response;
@@ -28,7 +28,7 @@ const deleteImgOnCloudinary = async (imageUrl) => {
         if (!imageUrl) return null;
 
         const publicId = imageUrl.split('/').pop().split('.')[0];  // Extract public ID
-        const result = await cloudinary.v2.uploader.destroy(publicId, {resource_type: "image"});;
+        const result = await cloudinary.uploader.destroy(publicId, {resource_type: "image"});;
         return result;
     } catch (error) {
         throw error;
