@@ -41,7 +41,7 @@ const deleteVideoOnCloudinary = async (videoUrl) => {
         if (!videoUrl) return null;
 
         const publicId = videoUrl.split('/').pop().split('.')[0];  // Extract public ID
-        const result = await cloudinary.v2.uploader.destroy(publicId, {resource_type: "video"});;
+        const result = await cloudinary.uploader.destroy(publicId, {resource_type: "video"});;
         return result;
     } catch (error) {
         throw error;
