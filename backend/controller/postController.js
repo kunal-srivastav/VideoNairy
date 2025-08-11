@@ -9,7 +9,6 @@ module.exports.createUserPost = async (req, res) => {
         }
 
         const post = await uploadOnCloudinary(imageLocalPath);
-        console.log(post)
         if (!post || !post.url) {
             return res.status(400).json({ message: "Error uploading image" });
         }
