@@ -9,12 +9,12 @@ module.exports.createUserPost = async (req, res) => {
         }
 
         const post = await uploadOnCloudinary(imageLocalPath);
-        if (!post || !post.url) {
+        if (!post || !post.secure_url) {
             return res.status(400).json({ message: "Error uploading image" });
         }
 
         const createPost = await postModel.create({
-            postImage: post.url,
+            postImage: post.secure_url,
             postBy: req.user._id
         });
 
@@ -26,7 +26,6 @@ module.exports.createUserPost = async (req, res) => {
         return res.status(500).json({ message: `Internal server error: ${error.message}` });
     }
 };
-
 
 module.exports.updateUserPost = async (req, res) => {
     try {
@@ -41,7 +40,7 @@ module.exports.updateUserPost = async (req, res) => {
 
         const newPostImage = await uploadOnCloudinary(postImageLocalPath);
 
-        const updatedPost = await postModel.findByIdAndUpdate(post._id, {$set: {postImage: newPostImage ? newPostImage.url : post.postImage}}, {new: true});
+        const updatedPost = await postModel.findByIdAndUpdate(post._id, {$set: {postImage: newPostImage ? newPostImage.secure_url : post.postImage}}, {new: true});
         if(updatedPost && newPostImage) {
             await deleteImgOnCloudinary(oldPostImage);
         }

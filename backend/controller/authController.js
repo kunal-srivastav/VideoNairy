@@ -19,7 +19,6 @@ module.exports.registerUser = async (req, res) => {
         // upload them to cloudinary, avatar and coverImage
         const avatar = await uploadOnCloudinary(avatarLocalPath);
         const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-        console.log(avatar);
     
         if(!avatar) return res.status(400).json("Avatar image is required");
     
@@ -148,7 +147,7 @@ module.exports.updateUserImage = async (req, res) => {
         const oldCoverImage = req.user.coverImage;
         if(!localImagePath) return res.status(400).json("Image is required");
         const newUploadedImage = await uploadOnCloudinary(localImagePath);
-        const updatedUser = await userModel.findOneAndUpdate({email: req.user.email}, { $set: {[imageField]: newUploadedImage?.url}}, {new: true});
+        const updatedUser = await userModel.findOneAndUpdate({email: req.user.email}, { $set: {[imageField]: newUploadedImage?.secure_url}}, {new: true});
         if(updatedUser) {
             if(imageType === "avatar") {
                 await deleteImgOnCloudinary(oldAvatar);

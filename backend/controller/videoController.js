@@ -19,7 +19,7 @@ module.exports.videoUpload = async (req, res) => {
         const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
         const videoFile = await uploadOnCloudinary(videoFileLocalPath);
     
-        const uploadedVideo = await videoModel.create({title, description: description || "", thumbnail: thumbnail? thumbnail.url : "", videoFile: videoFile.url, duration: videoFile.duration, isPublished, owner: id});
+        const uploadedVideo = await videoModel.create({title, description: description || "", thumbnail: thumbnail? thumbnail.secure_url : "", videoFile: videoFile.secure_url, duration: videoFile.duration, isPublished, owner: id});
         return res
         .status(201)
         .json({
@@ -130,7 +130,7 @@ module.exports.updateVideo = async (req, res) => {
     if(thumbnailLocalPath) {
         newThumbnail = await uploadOnCloudinary(thumbnailLocalPath);
     };
-    const updatedVideo = await videoModel.findByIdAndUpdate(videoId, {title: title || video.title, description: description || video.description, thumbnail: newThumbnail?.url || video.thumbnail, isPublished: isPublished || video.isPublished}, {new: true});
+    const updatedVideo = await videoModel.findByIdAndUpdate(videoId, {title: title || video.title, description: description || video.description, thumbnail: newThumbnail?.secure_url || video.thumbnail, isPublished: isPublished || video.isPublished}, {new: true});
     if (newThumbnail?.url && oldThumbnail) {
         await deleteImgOnCloudinary(oldThumbnail);
     };

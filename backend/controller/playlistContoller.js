@@ -16,7 +16,7 @@ module.exports.createPlaylist = async (req, res) => {
         const playList = await playListModel.findOne({name});
         if(playList) return res.status(400).json("This playlist already exists");
 
-        const playListCreated = await playListModel.create({name, description : description || "",playlistImage: playlistImage.url, creator: req.user._id});
+        const playListCreated = await playListModel.create({name, description : description || "",playlistImage: playlistImage.secure_url, creator: req.user._id});
 
         return res
         .status(201)
@@ -133,7 +133,7 @@ module.exports.updatePlaylist = async (req, res) => {
         if(!newPlaylistImageLocalPath) return res.status(400).json("Playlist image is required");
         const newPlaylistImage = await uploadOnCloudinary(newPlaylistImageLocalPath);
         if(!name) return res.status(400).json("Name is required");
-        const updatedPlaylist = await playListModel.findByIdAndUpdate(playlistId, {$set: {name, description:  description || playList.description, playlistImage: newPlaylistImage?.url || playList.playlistImage}}, {new: true});
+        const updatedPlaylist = await playListModel.findByIdAndUpdate(playlistId, {$set: {name, description:  description || playList.description, playlistImage: newPlaylistImage?.secure_url || playList.playlistImage}}, {new: true});
         if(newPlaylistImage && updatedPlaylist) {
             await deleteImgOnCloudinary(oldPlaylistImage);
         }
