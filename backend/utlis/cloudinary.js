@@ -8,11 +8,15 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-console.log({
-  cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-  apiKey: process.env.CLOUDINARY_API_KEY,
-  apiSecret: process.env.CLOUDINARY_API_SECRET ? "Loaded" : "Missing"
-});
+(async () => {
+  try {
+    const result = await cloudinary.api.ping();
+    console.log("✅ Cloudinary connection OK:", result);
+  } catch (err) {
+    console.error("❌ Cloudinary credentials invalid:", err);
+  }
+})();
+
 
     
 const uploadOnCloudinary = async (localFilePath) => {
