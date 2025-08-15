@@ -31,10 +31,7 @@ export const SetupInterceptor = (dispatch) => {
 
       // If it's 401 and not already retried, try refresh
       if (
-        error.response.status === 401 &&
-        !originalRequest._retry &&
-        !originalRequest.url.includes("/users/refresh-token") // 🚫 avoid loop
-      ) {
+        error.response.status === 401 && !originalRequest._retry) {
         // If already refreshing, add to queue
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
