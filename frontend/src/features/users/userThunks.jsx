@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { axiosInstance } from "../utils/SetupInterceptor";
+import { axiosInstance } from "../utils/SetupInterceptor.js";
 
 export const currentUser = createAsyncThunk("/users/current-user",
     async (_, {rejectWithValue}) => {
