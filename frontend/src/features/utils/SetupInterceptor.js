@@ -37,6 +37,7 @@ export const SetupInterceptor = (dispatch) => {
       if (error.response.status === 401 && !originalRequest._retry) {
         // If refresh is already happening → wait in queue
         if (isRefreshing) {
+            console.log("Queued request:", originalRequest.url);
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           })
