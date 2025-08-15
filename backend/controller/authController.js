@@ -120,7 +120,6 @@ module.exports.getCurrentUser = async (req, res) => {
             user: req.user
         });
     } catch (err) {
-        console.log(err);
         return res.status(500).json({message: "Unable to fetch current data"});
     }
 };

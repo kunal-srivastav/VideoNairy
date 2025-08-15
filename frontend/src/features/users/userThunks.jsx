@@ -1,16 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../utils/SetupInterceptor";
 
-// export const currentUser = createAsyncThunk("/users/current-user",
-//     async (_, {rejectWithValue}) => {
-//         try {
-//             const res = await axiosInstance.get(`/users/current-user`);
-//             return res.data.user;
-//         } catch (err) {
-//             return rejectWithValue(err?.response?.data?.message || "Failed to fetch current user");
-//         }
-//     }
-// );
+export const currentUser = createAsyncThunk("/users/current-user",
+    async (_, {rejectWithValue}) => {
+        try {
+            const res = await axiosInstance.get(`/users/current-user`);
+            return res.data.user;
+        } catch (err) {
+            return rejectWithValue(err?.response?.data?.message || "Failed to fetch current user");
+        }
+    }
+);
 
 export const loginUser = createAsyncThunk("/users/login", 
     async ({email, password}, {rejectWithValue}) => {
@@ -90,16 +90,16 @@ export const updateAccountDetails = createAsyncThunk("/users/update",
     }
 );
 
-export const refreshToken = createAsyncThunk("/users/refresh-token", 
-    async (_, {rejectWithValue}) => {
-        try {
-            const res = await axiosInstance.post(`/users/refresh-token`);
-            return res.data;
-        } catch (err) {
-            return rejectWithValue(err?.response?.data || "Token is not refreshed");
-        }
-    }
-);
+// export const refreshToken = createAsyncThunk("/users/refresh-token", 
+//     async (_, {rejectWithValue}) => {
+//         try {
+//             const res = await axiosInstance.post(`/users/refresh-token`);
+//             return res.data;
+//         } catch (err) {
+//             return rejectWithValue(err?.response?.data || "Token is not refreshed");
+//         }
+//     }
+// );
 
 export const updateUserImage = createAsyncThunk("/users/update-avatar", 
     async ({type, formData}, {rejectWithValue}) => {
