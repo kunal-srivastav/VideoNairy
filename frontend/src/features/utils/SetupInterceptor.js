@@ -34,7 +34,7 @@ export const SetupInterceptor = (dispatch) => {
       }
 
       // Handle expired access token
-      if (error.response.status === 401 && !originalRequest._retry) {
+      if (error.response.status === 401 && !originalRequest._retry && !originalRequest.url.includes("/users/refresh-token")) {
         // If refresh is already happening → wait in queue
         if (isRefreshing) {
             console.log("Queued request:", originalRequest.url);
