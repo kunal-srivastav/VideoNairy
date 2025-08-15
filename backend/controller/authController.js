@@ -20,7 +20,7 @@ module.exports.registerUser = async (req, res) => {
         const avatar = await uploadOnCloudinary(avatarLocalPath);
         const coverImage = await uploadOnCloudinary(coverImageLocalPath);
     
-        if(!avatar) return res.status(400).json("Avatar image is required");
+        if(!avatar) return res.status(400).json({message: "Avatar image is required"});
     
         const createdUser = await userModel.create({fullName, userName: userName.toLowerCase(), email, password, avatar: avatar.secure_url, coverImage: coverImage?.secure_url || ""})
         const newUser = await userModel.findById(createdUser._id).select("-password -refreshToken");
@@ -33,7 +33,7 @@ module.exports.registerUser = async (req, res) => {
         .cookie("refreshToken", refreshToken, cookieOptions.refreshToken)
         .json({message: "Account created successfully!", newUser});
     } catch (err) {
-    return res.status(500).json(`Account creation failed ${err.message}`);
+    return res.status(500).json({message: "Failed to create account"});
     }
 };
 
@@ -42,23 +42,23 @@ module.exports.loginUser = async (req, res) => {
         const {email, password} = req.body;
     
         // check email or password is not empty
-        if(!email) return res.status(400).json("Email is required");
-        if(!password) return res.status(400).json("Password is required");
+        if(!email) return res.status(400).json({message: "Email is required"});
+        if(!password) return res.status(400).json({message: "Password is required"});
         const user = await userModel.findOne({email});
-        if(!user) return res.status(404).json("Incorrect email or password");
+        if(!user) return res.status(404).json({message: "Incorrect email or password"});
     
         // check password is valid
         const isPasswordCorrect = await user.isPasswordCorrect(password);
-        if(!isPasswordCorrect) return res.status(404).json("Incorrect email or password");
+        if(!isPasswordCorrect) return res.status(404).json({message: "Incorrect email or password"});
     
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user);
         return res
         .status(200)
         .cookie("accessToken", accessToken, cookieOptions.accessToken)
         .cookie("refreshToken", refreshToken, cookieOptions.refreshToken)
-        .json({message: "Successfully loggedIn"});
+        .json({message: "Successfully loggedIn", user});
     } catch (err) {
-        return res.status(500).json({message: err.message})
+        return res.status(500).json({message: "Login failed"})
     }
 };
 
@@ -95,19 +95,19 @@ module.exports.refreshToken = async(req, res) => {
 
 module.exports.changeCurrentPassword = async(req, res) => {
     const {oldPassword, newPassword} = req.body;
-    if(!oldPassword || !newPassword) return res.status(400).json("All fields are required");
+    if(!oldPassword || !newPassword) return res.status(400).json({message: "All fields are required"});
     const {email} = req.user;
     const user = await userModel.findOne({email});
     try {
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
-        if(!isPasswordCorrect) return res.status(401).json("Invalid Password");
+        if(!isPasswordCorrect) return res.status(401).json({message: "Invalid Password"});
         user.password = newPassword;
         await user.save({validateBeforeSave: true});
         return res
         .status(200)
-        .json("Successfully password changed");
+        .json({message: "Successfully password changed"});
     } catch (err) {
-     return res.status(402).json(`Password unchanged ${err.message}`)
+     return res.status(400).json({message: "Password unchanged"})
     }
 };
 
@@ -120,13 +120,13 @@ module.exports.getCurrentUser = async (req, res) => {
             user: req.user
         });
     } catch (err) {
-        return res.status(500).json(`Unable to fetch current data ${err.message}`);
+        return res.status(500).json({message: "Unable to fetch current data"});
     }
 };
 
 module.exports.updateAcountDetails = async (req, res) => {
     const {fullName, userName, email} = req.body;
-    if(!(fullName || userName || email)) return res.status(200).json("All fields are required");
+    if(!(fullName || userName || email)) return res.status(400).json({message: "All fields are required"});
     const updatedUser = await userModel.findOneAndUpdate({email: req.user.email}, {$set: {fullName, userName, email}}, {new: true});
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(updatedUser);
     return res
@@ -146,7 +146,7 @@ module.exports.updateUserImage = async (req, res) => {
         const localImagePath = req.file? req.file.path : "";
         const oldAvatar = req.user.avatar;
         const oldCoverImage = req.user.coverImage;
-        if(!localImagePath) return res.status(400).json("Image is required");
+        if(!localImagePath) return res.status(400).json({message: "Image is required"});
         const newUploadedImage = await uploadOnCloudinary(localImagePath);
         const updatedUser = await userModel.findOneAndUpdate({email: req.user.email}, { $set: {[imageField]: newUploadedImage?.secure_url}}, {new: true});
         if(updatedUser) {
@@ -163,13 +163,13 @@ module.exports.updateUserImage = async (req, res) => {
             updatedUser
         });
     } catch (err) {
-        return res.status(500).json(`Image upload failed ${err.message}`);
+        return res.status(500).json({message: "Image upload failed"});
     }
 };
 
 module.exports.getUserChannelProfile = async (req, res) => {
     const {userName} = req.params;
-    if(!userName) return res.status(404).json("User not found");
+    if(!userName) return res.status(404).json({message: "User not found"});
 
     const channel = await userModel.aggregate([
         {
@@ -278,7 +278,7 @@ module.exports.getUserChannelProfile = async (req, res) => {
         }
     ]);
     
-    if(!channel.length) return res.status(200).json("Channel does not exists");
+    if(!channel.length) return res.status(200).json({message: "Channel does not exists"});
 
     return res
     .status(200)

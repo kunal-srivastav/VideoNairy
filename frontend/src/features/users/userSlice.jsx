@@ -37,6 +37,7 @@ const userSlice = createSlice({
         .addCase(loginUser.pending, handlePending)
         .addCase(loginUser.fulfilled, (state, action) => {
             state.loading = false;
+            state.loggedInUser = action.payload.user;
             state.successMsg = action.payload.message;
         })
         .addCase(loginUser.rejected, handleOnRejected)
