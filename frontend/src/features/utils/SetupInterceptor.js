@@ -50,12 +50,14 @@ export const SetupInterceptor = (dispatch) => {
 
         try {
           // Refresh access token using cookie
+          console.log("refresh token");
           await dispatch(refreshToken()).unwrap();
 
           // Retry all queued requests
           processQueue(null);
           return axiosInstance(originalRequest);
         } catch (err) {
+          console.log("Refresh token error", err);
           // Fail all queued requests and logout
           processQueue(err);
           dispatch(logoutUser());
