@@ -102,6 +102,12 @@ const userSlice = createSlice({
             state.loading = false;
         })
         .addCase(userWatchHistory.rejected, handleOnRejected)
+
+        .addCase(refreshToken.pending, handlePending)
+        .addCase(refreshToken.fulfilled, (state, action) => {
+            state.loading = false;
+        })
+        .addCase(refreshToken.rejected, handleOnRejected);
     }
 });
 
