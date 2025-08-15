@@ -1,16 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../utils/SetupInterceptor";
 
-export const currentUser = createAsyncThunk("/users/current-user",
-    async (_, {rejectWithValue}) => {
-        try {
-            const res = await axiosInstance.get(`/users/current-user`);
-            return res.data.user;
-        } catch (err) {
-            return rejectWithValue(err?.response?.data?.message || "Failed to fetch current user");
-        }
-    }
-);
+// export const currentUser = createAsyncThunk("/users/current-user",
+//     async (_, {rejectWithValue}) => {
+//         try {
+//             const res = await axiosInstance.get(`/users/current-user`);
+//             return res.data.user;
+//         } catch (err) {
+//             return rejectWithValue(err?.response?.data?.message || "Failed to fetch current user");
+//         }
+//     }
+// );
 
 export const loginUser = createAsyncThunk("/users/login", 
     async ({email, password}, {rejectWithValue}) => {
