@@ -39,7 +39,7 @@ function App() {
 
   useEffect(() => {
     dispatch(currentUser());
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="container-fluid">
