@@ -60,8 +60,8 @@ const userSlice = createSlice({
        //Register user
        .addCase(createAccount.pending, handlePending)
        .addCase(createAccount.fulfilled, (state, action) => {
-            state.loggedInUser = action.payload;
-            state.successMsg = action.payload;
+            state.loggedInUser = action.payload.newUser;
+            state.successMsg = action.payload.message;
             state.loading = false;
        })
         .addCase(createAccount.rejected, handleOnRejected)

@@ -11,7 +11,7 @@ module.exports.registerUser = async (req, res) => {
         
         // find the user if already registered then return you have already an account
         const existedUser = await userModel.findOne({ $or:[ {email}, {userName}]});
-        if(existedUser) return res.status(401).json("You have already an account, Please login..");
+        if(existedUser) return res.status(409).json({message: "You have already an account, Please login.."});
     
         const avatarLocalPath = req.files?.avatar ? req.files.avatar[0].path : "";
         const coverImageLocalPath = req.files?.coverImage ? req.files.coverImage[0].path : "";
@@ -23,6 +23,7 @@ module.exports.registerUser = async (req, res) => {
         if(!avatar) return res.status(400).json("Avatar image is required");
     
         const createdUser = await userModel.create({fullName, userName: userName.toLowerCase(), email, password, avatar: avatar.secure_url, coverImage: coverImage?.secure_url || ""})
+        const newUser = await userModel.findById(createdUser._id).select("-password -refreshToken");
     
         // generate access and refresh token
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(createdUser);
@@ -30,7 +31,7 @@ module.exports.registerUser = async (req, res) => {
         .status(200)
         .cookie("accessToken", accessToken, cookieOptions.accessToken)
         .cookie("refreshToken", refreshToken, cookieOptions.refreshToken)
-        .json("Account created successfully!");
+        .json({message: "Account created successfully!", newUser});
     } catch (err) {
     return res.status(500).json(`Account creation failed ${err.message}`);
     }
