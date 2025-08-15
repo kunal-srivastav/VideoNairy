@@ -116,10 +116,11 @@ module.exports.getCurrentUser = async (req, res) => {
         return res
         .status(200)
         .json({
-            message: "successfully get current user",
+            message: "successfully retrieve current user",
             user: req.user
         });
     } catch (err) {
+        console.log(err);
         return res.status(500).json({message: "Unable to fetch current data"});
     }
 };
