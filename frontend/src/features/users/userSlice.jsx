@@ -17,6 +17,7 @@ const userSlice = createSlice({
         },
         setError: (state, action) => {
             state.error = action.payload;
+            state.loading = false;
         },
         updateToggleSubscription: (state, action) => {
             const { isSubscribed, totalSubscribers } = action.payload;
