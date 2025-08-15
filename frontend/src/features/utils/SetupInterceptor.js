@@ -1,16 +1,15 @@
-import { logoutUser, refreshToken } from "../users/userThunks.jsx";
+import { logoutUser, refreshToken } from "../users/userThunks";
 import axios from "axios";
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true // so cookies (JWT) are sent automatically
+  withCredentials: true
 });
 
-let interceptorAttached = false;
-let isRefreshing = false;
-let failedQueue = [];
+let isRefreshing = false;       // To prevent multiple refresh calls
+let failedQueue = [];           // Store requests while refreshing
 
-// Helper to resolve/reject all queued requests
+// Retry or reject queued requests after refresh
 const processQueue = (error, token = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
     if (error) reject(error);
@@ -20,46 +19,44 @@ const processQueue = (error, token = null) => {
 };
 
 export const SetupInterceptor = (dispatch) => {
-  if (interceptorAttached) return;
-  interceptorAttached = true;
-
   axiosInstance.interceptors.response.use(
-    res => res,
+    (res) => res, // Pass successful responses directly
     async (error) => {
       const originalRequest = error.config;
 
-      // If no response from server (network or CORS error)
+      // No response means network or CORS issue → reject
       if (!error?.response) {
         return Promise.reject(error);
       }
 
-      // Handle expired access token
-      if (error.response.status === 401 && !originalRequest._retry && !originalRequest.url.includes("/users/refresh-token")) {
-        // If refresh is already happening → wait in queue
+      // If it's 401 and not already retried, try refresh
+      if (
+        error.response.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url.includes("/users/refresh-token") // 🚫 avoid loop
+      ) {
+        // If already refreshing, add to queue
         if (isRefreshing) {
-            console.log("Queued request:", originalRequest.url);
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           })
-            .then(() => axiosInstance(originalRequest)) // retry after refresh
-            .catch(err => Promise.reject(err));
+            .then(() => axiosInstance(originalRequest))
+            .catch((err) => Promise.reject(err));
         }
 
-        // Mark request as retried
+        // Mark this request as already retried
         originalRequest._retry = true;
         isRefreshing = true;
 
         try {
-          // Refresh access token using cookie
-          console.log("refresh token");
+          console.log("🔄 Refreshing token...");
           await dispatch(refreshToken()).unwrap();
 
-          // Retry all queued requests
+          // Retry queued requests
           processQueue(null);
           return axiosInstance(originalRequest);
         } catch (err) {
-          console.log("Refresh token error", err);
-          // Fail all queued requests and logout
+          console.log("❌ Refresh token failed", err);
           processQueue(err);
           dispatch(logoutUser());
           window.location.href = "/users/login";
