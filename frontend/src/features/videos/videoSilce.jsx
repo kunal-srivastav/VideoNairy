@@ -44,6 +44,7 @@ const videoSlice = createSlice({
         .addCase(videosFetched.rejected, (handleOnRejected))
 
         .addCase(userProfile.fulfilled, (state, action) => {
+            state.loading = false;
             state.userVideos = action.payload.videos;
         })
 
