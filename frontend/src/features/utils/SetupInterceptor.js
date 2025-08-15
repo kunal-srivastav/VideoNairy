@@ -3,55 +3,40 @@ import axios from "axios";
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true
+  withCredentials: true // send cookies automatically
 });
 
 let interceptorAttached = false;
-let isRefreshing = false;
-let failedQueue = [];
-
-const processQueue = (error, token = null) => {
-  failedQueue.forEach(p => (error ? p.reject(error) : p.resolve(token)));
-  failedQueue = [];
-};
 
 export const SetupInterceptor = (dispatch) => {
   if (interceptorAttached) return;
   interceptorAttached = true;
 
   axiosInstance.interceptors.response.use(
-    res => res,
+    response => response,
     async error => {
       const originalRequest = error.config;
 
-      if (!error?.response) return Promise.reject(error);
+      // If no server response at all (network error)
+      if (!error?.response) {
+        return Promise.reject(error);
+      }
 
+      // If token expired (401) and we haven't retried this request yet
       if (error.response.status === 401 && !originalRequest._retry) {
-        if (isRefreshing) {
-          return new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
-          })
-          .then(() => axiosInstance(originalRequest))
-          .catch(err => Promise.reject(err));
-        }
-
         originalRequest._retry = true;
-        isRefreshing = true;
+        try {
+          // Try to refresh token (cookie-based)
+          await dispatch(refreshToken()).unwrap();
 
-        return new Promise(async (resolve, reject) => {
-          try {
-            await dispatch(refreshToken()).unwrap();
-            processQueue(null);
-            resolve(axiosInstance(originalRequest));
-          } catch (err) {
-            processQueue(err);
-            dispatch(logoutUser());
-            window.location.href = "/users/login";
-            reject(err);
-          } finally {
-            isRefreshing = false;
-          }
-        });
+          // Retry the original request
+          return axiosInstance(originalRequest);
+        } catch (err) {
+          // If refresh failed → logout and redirect
+          dispatch(logoutUser());
+          window.location.href = "/users/login";
+          return Promise.reject(err);
+        }
       }
 
       return Promise.reject(error);
