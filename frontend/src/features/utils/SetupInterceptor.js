@@ -1,4 +1,4 @@
-import { logoutUser, refreshToken } from "../users/userThunks";
+import { logoutUser, refreshToken } from "../users/userThunks.jsx";
 import axios from "axios";
 
 export const axiosInstance = axios.create({
