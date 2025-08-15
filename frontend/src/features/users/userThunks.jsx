@@ -90,16 +90,16 @@ export const updateAccountDetails = createAsyncThunk("/users/update",
     }
 );
 
-// export const refreshToken = createAsyncThunk("/users/refresh-token", 
-//     async (_, {rejectWithValue}) => {
-//         try {
-//             const res = await axiosInstance.post(`/users/refresh-token`);
-//             return res.data;
-//         } catch (err) {
-//             return rejectWithValue(err?.response?.data || "Token is not refreshed");
-//         }
-//     }
-// );
+export const refreshToken = createAsyncThunk("/users/refresh-token", 
+    async (_, {rejectWithValue}) => {
+        try {
+            const res = await axiosInstance.post(`/users/refresh-token`);
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err?.response?.data || "Token is not refreshed");
+        }
+    }
+);
 
 export const updateUserImage = createAsyncThunk("/users/update-avatar", 
     async ({type, formData}, {rejectWithValue}) => {
