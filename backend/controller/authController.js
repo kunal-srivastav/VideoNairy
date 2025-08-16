@@ -68,7 +68,7 @@ module.exports.logOut = async (req, res) => {
     .status(200)
     .clearCookie("accessToken", cookieOptions.accessToken)
     .clearCookie("refreshToken", cookieOptions.refreshToken)
-    .json("User logout")
+    .json({message: "User logout"})
 };
 
 module.exports.refreshToken = async(req, res) => {

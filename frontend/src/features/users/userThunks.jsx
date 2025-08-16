@@ -18,7 +18,7 @@ export const loginUser = createAsyncThunk("/users/login",
           const res = await axiosInstance.post(`/users/login`, {email, password});
           return res.data;
         } catch (err) {
-            return rejectWithValue(err?.response?.data || "Login Failed");
+            return rejectWithValue(err?.response?.data?.message || "Login Failed");
         }
     }
 );
@@ -29,7 +29,7 @@ export const logoutUser = createAsyncThunk("/users/logout",
             const res = await axiosInstance.get(`/users/logout`);
             return res.data;
         } catch (err) {
-            return rejectWithValue(err?.response?.data || "Logout failed");
+            return rejectWithValue(err?.response?.data?.message || "Logout failed");
         }
     }
 );
@@ -40,7 +40,7 @@ export const changePassword = createAsyncThunk("/users/change-password",
         const res = await axiosInstance.post(`/users/change-password`, { oldPassword, newPassword });
         return res.data;
       } catch (err) {
-        return rejectWithValue(err?.response?.data || "Password unchanged")
+        return rejectWithValue(err?.response?.data?.message || "Password unchanged")
       }
     }
 );
@@ -51,7 +51,7 @@ export const createAccount = createAsyncThunk("/users/register",
             const res = await axiosInstance.post(`/users/register`, registerData);
             return res.data;
         } catch (err) {
-            return rejectWithValue(err?.response?.data || "Register failed");
+            return rejectWithValue(err?.response?.data?.message || "Register failed");
         }
     }
 );
@@ -74,7 +74,7 @@ export const userProfile = createAsyncThunk("/users/profile",
             return res.data;
         }
         } catch (err) {
-            return rejectWithValue(err?.response?.data || "unavailable to fetch user profile");
+            return rejectWithValue(err?.response?.data?.message || "unavailable to fetch user profile");
         }
     }
 );
@@ -85,7 +85,7 @@ export const updateAccountDetails = createAsyncThunk("/users/update",
             const res = await axiosInstance.patch(`/users/update-detail`, updateAccountData);
             return res.data;
         } catch (err) {
-            return rejectWithValue(err?.response?.data || "User account detail not updated");
+            return rejectWithValue(err?.response?.data?.message || "User account detail not updated");
         }
     }
 );
@@ -96,7 +96,7 @@ export const refreshToken = createAsyncThunk("/users/refresh-token",
             const res = await axiosInstance.post(`/users/refresh-token`);
             return res.data;
         } catch (err) {
-            return rejectWithValue(err?.response?.data || "Token is not refreshed");
+            return rejectWithValue(err?.response?.data?.message || "Token is not refreshed");
         }
     }
 );
@@ -107,7 +107,7 @@ export const updateUserImage = createAsyncThunk("/users/update-avatar",
             const res = await axiosInstance.patch(`/users/update-image/${type}`, formData);
             return res.data;
         } catch (err) {
-            return rejectWithValue(err?.response?.data || "Image is not updated");
+            return rejectWithValue(err?.response?.data?.message || "Image is not updated");
         }
     }
 );
@@ -118,7 +118,7 @@ export const userWatchHistory = createAsyncThunk("/users/history",
             const res = await axiosInstance.get(`/users/watch-history`);
             return res.data;
         } catch (err) {
-            return rejectWithValue(err?.response?.data || "Unable to fetch user watch-history");
+            return rejectWithValue(err?.response?.data?.message || "Unable to fetch user watch-history");
         }
     }
 );
