@@ -28,7 +28,7 @@ export const SetupInterceptor = (dispatch) => {
 
       if (err.response?.status === 401 && !originalRequest._retry) {
         // Prevent retry loops
-        if (originalRequest.url.includes("/auth/refresh-token")) {
+        if (originalRequest.url.includes("/users/refresh-token")) {
           dispatch(logoutUser());
           window.location.href = "/users/login";
           return Promise.reject(err);
