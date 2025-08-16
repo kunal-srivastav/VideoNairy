@@ -25,6 +25,8 @@ import Sidebar from './components/Sidebar';
 import { currentUser } from './features/users/userThunks';
 import { SetupInterceptor } from './features/utils/SetupInterceptor';
 
+console.log(document.cookie);
+
 function App() {
   const location = useLocation();
   const dispatch = useDispatch();
