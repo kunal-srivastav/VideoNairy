@@ -3,19 +3,16 @@ import { refreshToken, logoutUser } from "../users/userThunks.jsx";
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+  withCredentials: true, // cookies sent automatically
 });
 
 let isRefreshing = false;
 let failedQueue = [];
 
-const processQueue = (error, token = null) => {
+const processQueue = (error) => {
   failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
+    if (error) prom.reject(error);
+    else prom.resolve();
   });
   failedQueue = [];
 };
@@ -26,16 +23,11 @@ export const SetupInterceptor = (dispatch) => {
     async (err) => {
       const originalRequest = err.config;
 
+      // skip if already retried
       if (err.response?.status === 401 && !originalRequest._retry) {
-        // Prevent retry loops
-        if (originalRequest.url.includes("/users/refresh-token")) {
-          dispatch(logoutUser());
-          window.location.href = "/users/login";
-          return Promise.reject(err);
-        }
 
+        // don't try to refresh while already refreshing
         if (isRefreshing) {
-          // Queue the request until refresh finishes
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           })
@@ -48,20 +40,21 @@ export const SetupInterceptor = (dispatch) => {
 
         try {
           const result = await dispatch(refreshToken());
+
           isRefreshing = false;
 
           if (result.meta.requestStatus === "fulfilled") {
             processQueue(null); // retry all queued requests
-            return axiosInstance(originalRequest); // retry original
+            return axiosInstance(originalRequest);
           } else {
-            processQueue(result.error, null);
+            processQueue(result.error);
             dispatch(logoutUser());
             window.location.href = "/users/login";
             return Promise.reject(err);
           }
         } catch (refreshErr) {
           isRefreshing = false;
-          processQueue(refreshErr, null);
+          processQueue(refreshErr);
           dispatch(logoutUser());
           window.location.href = "/users/login";
           return Promise.reject(refreshErr);
