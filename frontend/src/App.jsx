@@ -39,7 +39,7 @@ function App() {
   const hideLayout = hideLayoutPaths.includes(location.pathname);
 
   useEffect(() => {
-    SetupInterceptor();
+    SetupInterceptor(dispatch);
     dispatch(currentUser());
   }, [dispatch]);
 
