@@ -8,12 +8,12 @@ module.exports.videoUpload = async (req, res) => {
     try {
         const { title, description, isPublished } = req.body;
         const { id } = req.user;
-        if(!title) return res.status(400).json("Title is required");
+        if(!title) return res.status(400).json({message: "Title is required"});
         
         const thumbnailLocalPath = req.files.thumbnail? req.files.thumbnail[0].path : "";
         const videoFileLocalPath = req.files.videoFile? req.files.videoFile[0].path : "";
         
-        if(!videoFileLocalPath) return res.status(400).json("Video file is required");
+        if(!videoFileLocalPath) return res.status(400).json({message: "Video file is required"});
     
         // upload on cloudinary
         const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
@@ -27,7 +27,7 @@ module.exports.videoUpload = async (req, res) => {
             uploadedVideo
         })
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to upload video"});
     }
 };
 
@@ -57,7 +57,7 @@ module.exports.getAllVideos = async (req, res) => {
         .limit(pageSize)
         .populate("owner", "userName email avatar");
 
-        if(!videos.length) return res.status(404).json("Video not found");
+        if(!videos.length) return res.status(404).json({message: "Video not found"});
 
         return res
         .status(200)
@@ -71,7 +71,7 @@ module.exports.getAllVideos = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to fetch videos"});
     }
 };
 
@@ -80,7 +80,7 @@ module.exports.getVideoById = async (req, res) => {
     const { videoId } = req.params;
     try {
         const video = await videoModel.findById(videoId).populate("owner", "userName email avatar");
-        if(!video) return res.status(404).json("Video not found");
+        if(!video) return res.status(404).json({message: "Video not found"});
         if(userId){
         video.views += 1; // Increment view count
         await video.save();
@@ -96,7 +96,7 @@ module.exports.getVideoById = async (req, res) => {
                 $addToSet: { watchHistory: videoId }, // prevents duplicates
             });
         }
-        if(!video) return res.status(200).json("Video not found");
+        if(!video) return res.status(200).json({message: "Video not found"});
 
         return res
         .status(200)
@@ -108,7 +108,7 @@ module.exports.getVideoById = async (req, res) => {
             totalSubscriber
         });
     } catch (err) {
-        return res.status(500).json(`Internal server error ${err.message}`)
+        return res.status(500).json({message: "Failed to fetch video"});
     }
 };
 
@@ -118,9 +118,9 @@ module.exports.updateVideo = async (req, res) => {
     const userId = req.user._id;
 
     const video = await videoModel.findById(videoId);
-    if(!video) return res.status(404).json("Video not found");
+    if(!video) return res.status(404).json({message: "Video not found"});
 
-    if(String(userId) !== String(video.owner)) return res.status(403).json("You don't have any permission to change");
+    if(String(userId) !== String(video.owner)) return res.status(403).json({message: "You don't have any permission to change"});
     const oldThumbnail = video.thumbnail;
 
     const {title, description, isPublished} = req.body;
@@ -141,7 +141,7 @@ module.exports.updateVideo = async (req, res) => {
         updatedVideo
     })
    } catch (error) {
-        return res.status(500).json(`Internal Server Problem ${error.message}`)
+        return res.status(500).json({message: "Failed to update video"})
    }
 };
 
@@ -150,11 +150,11 @@ module.exports.deleteVideo = async (req, res) => {
         const { videoId } = req.params;
         const userId = req.user._id;
         const video = await videoModel.findById(videoId);
-        if(!video) return res.status(400).json({error: "Video Id is required"});
+        if(!video) return res.status(400).json({message: "Video Id is required"});
         const videoThumbnailUrl = video?.thumbnail;
         const videoFileUrl = video?.videoFile
 
-        if(String(userId) !== String(video.owner)) return res.status(403).json("You don't have any permission to delete this video");
+        if(String(userId) !== String(video.owner)) return res.status(403).json({message: "You don't have any permission to delete this video"});
         
         try {
         if (videoThumbnailUrl) {
@@ -165,7 +165,7 @@ module.exports.deleteVideo = async (req, res) => {
             await deleteVideoOnCloudinary(videoFileUrl);
         }
         } catch (err) {
-        return res.status(500).json({ message: `Failed to delete media files: ${err.message}` });
+        return res.status(500).json({ message: "Failed to delete media files" });
         }
 
         const deletedVideo = await videoModel.findByIdAndDelete(videoId);
@@ -176,7 +176,7 @@ module.exports.deleteVideo = async (req, res) => {
             deletedVideoId: deletedVideo._id
         });
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to delete video"});
     }
 };
 

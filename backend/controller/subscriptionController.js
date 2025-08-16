@@ -61,14 +61,14 @@ module.exports.getAllSubscribedChannel = async (req, res) => {
 
     return res.status(200).json(subscribedChannels);
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: "Failed to fetch subscribers" });
   }
 };
 
 module.exports.toggleSubscription = async (req, res) => {
     try {
         const { channelId } = req.params;
-        if(!channelId) return res.status(400).json("Invalid channel ID");
+        if(!channelId) return res.status(400).json({message: "Invalid channel ID"});
         const subscriberExists = await subscriptionModel.findOne({subscriber: req.user._id, channel: channelId});
         if(subscriberExists) {
             await subscriptionModel.findByIdAndDelete(subscriberExists._id);
@@ -93,6 +93,6 @@ module.exports.toggleSubscription = async (req, res) => {
             channelId
         });
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to toggle subscription"});
     }
 };

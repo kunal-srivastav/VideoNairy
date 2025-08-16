@@ -232,11 +232,11 @@ module.exports.updateComment = async (req, res) => {
     const comment = await commentModel.findById(commentId).populate("owner", "avatar userName");
     if(!comment) return res.status(404).json("Comment not found");
 
-    if(String(comment.owner._id) !== String(userId)) return res.status(403).json("You don't have any permission to update a comment");
+    if(String(comment.owner._id) !== String(userId)) return res.status(403).json({message: "You don't have any permission to update a comment"});
 
     const { content } = req.body;
 
-    if(!content) return res.status(400).json("Comment content is required");
+    if(!content) return res.status(400).json({message: "Comment content is required"});
     comment.content = content;
     await comment.save();
     return res
@@ -254,7 +254,7 @@ module.exports.deleteComment = async (req, res) => {
         const userId = req.user._id;
 
         const comment = await commentModel.findById(commentId);
-        if(!comment) return res.status(404).json("Comment not found");
+        if(!comment) return res.status(404).json({message: "Comment not found"});
 
         if(comment.post) {
             const post = await postModel.findById(comment.post);
@@ -263,7 +263,7 @@ module.exports.deleteComment = async (req, res) => {
         }
 
         // check user and content owner
-        if(String(userId) !== String(comment.owner)) return res.status(403).json("You don't have any permission to delete this comment");
+        if(String(userId) !== String(comment.owner)) return res.status(403).json({message: "You don't have any permission to delete this comment"});
 
         const deleteComment = await commentModel.findByIdAndDelete(commentId);
         return res
@@ -273,7 +273,7 @@ module.exports.deleteComment = async (req, res) => {
             deleteComment
         })
     } catch (err) {
-        return res.status(500).json(`Internal server error ${err.message}`);
+        return res.status(500).json({message: "Failed to delete comment"});
     }
 };
 

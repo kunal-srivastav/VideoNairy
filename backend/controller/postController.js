@@ -23,7 +23,7 @@ module.exports.createUserPost = async (req, res) => {
             createPost
         });
     } catch (error) {
-        return res.status(500).json({ message: `Internal server error: ${error.message}` });
+        return res.status(500).json({ message: "Failed to create post" });
     }
 };
 
@@ -31,12 +31,12 @@ module.exports.updateUserPost = async (req, res) => {
     try {
         const { postId } = req.params;
         const post = await postModel.findById(postId);
-        if(!post) return res.status(404).json("Post not found");
+        if(!post) return res.status(404).json({message: "Post not found"});
 
-        if(String(req.user._id) !== String(post.postBy)) return res.status(403).json("You don't have any permission to update post");
+        if(String(req.user._id) !== String(post.postBy)) return res.status(403).json({message: "You don't have any permission to update post"});
         const oldPostImage = post.postImage;
         const postImageLocalPath = req.file? req.file.path : "";
-        if(!postImageLocalPath) return res.status(400).json("Post image is required");
+        if(!postImageLocalPath) return res.status(400).json({message: "Post image is required"});
 
         const newPostImage = await uploadOnCloudinary(postImageLocalPath);
 
@@ -51,7 +51,7 @@ module.exports.updateUserPost = async (req, res) => {
             updatedPost
         });
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to update post"});
     }
 };
 
@@ -59,9 +59,9 @@ module.exports.deleteUserPost = async (req, res) => {
     try {
         const { postId } = req.params;
         const post = await postModel.findById(postId);
-        if(!post) return res.status(404).json("Post not found");
+        if(!post) return res.status(404).json({message: "Post not found"});
 
-        if(String(req.user._id) !== String(post.postBy)) return res.status(403).json("You don't have any permission to delete this post");
+        if(String(req.user._id) !== String(post.postBy)) return res.status(403).json({message: "You don't have any permission to delete this post"});
         const oldPostImage = post.postImage;
         
         const deletedPost = await postModel.findByIdAndDelete(postId);
@@ -77,6 +77,6 @@ module.exports.deleteUserPost = async (req, res) => {
     } catch (error) {
         return res
         .status(500)
-        .json(`Internal server error ${error.message}`);
+        .json({message: "Failed to delete post"});
     }
 };

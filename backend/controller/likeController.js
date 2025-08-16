@@ -7,7 +7,7 @@ module.exports.toggleVideoLike = async (req, res) => {
     try {
         const { videoId } = req.params;
         const video = await videoModel.findById(videoId);
-        if(!video) return res.status(404).json("Video not found");
+        if(!video) return res.status(404).json({message: "Video not found"});
 
         const existingLike = await likesModel.findOneAndDelete({likedBy: req.user._id, video: videoId});
         if(existingLike) {
@@ -31,7 +31,7 @@ module.exports.toggleVideoLike = async (req, res) => {
             totalLikes
         })
     } catch (err) {
-        return res.status(500).json(`Internal server error ${err.message}`);
+        return res.status(500).json({message: "Failed to toggle like"});
     }
 };
 
@@ -40,7 +40,7 @@ module.exports.toggleCommentLike = async (req, res) => {
         const { commentId } = req.params;
 
         const commentByUser = await commentModel.findById(commentId);
-        if(!commentByUser) return res.status(404).json("Comment not found");
+        if(!commentByUser) return res.status(404).json({message: "Comment not found"});
 
         const unlikedComment = await likesModel.findOneAndDelete({likedBy: req.user._id, comment: commentId});
         if(unlikedComment) {
@@ -66,7 +66,7 @@ module.exports.toggleCommentLike = async (req, res) => {
             likesCount: totalLikes
      });
    } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to toggle like"});
    }
 };
 
@@ -75,7 +75,7 @@ module.exports.togglePostLike = async (req, res) => {
         const { postId } = req.params;
         const userId = req.user._id
         const post = await postModel.findById(postId);
-        if(!post) return res.status(404).json("Post not found");   
+        if(!post) return res.status(404).json({message: "Post not found"});   
 
         const alreadyLiked = post.like.some(user => user.equals(userId))
         let postLiked = null;
@@ -106,7 +106,7 @@ module.exports.togglePostLike = async (req, res) => {
             totalLikes: post.totalLikes
         })
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to toggle like on post"});
     }
 };
 
@@ -163,6 +163,6 @@ module.exports.getLikedVideo = async (req, res) => {
             likedVideo
         })
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to toggle like on video"});
     }
 };
