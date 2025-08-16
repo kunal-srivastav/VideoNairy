@@ -46,7 +46,7 @@ function App() {
     if(loggedInUser){
       dispatch(currentUser());
     }
-  }, [loggedInUser]);
+  }, [dispatch]);
 
   return (
     <div className="container-fluid">
