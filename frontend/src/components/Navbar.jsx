@@ -30,7 +30,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm py-2">
+    <nav className="navbar navbar-expand-lg bg-dark sticky-top shadow-sm py-2">
       <div className="container-fluid">
 
         {/* Logo */}
