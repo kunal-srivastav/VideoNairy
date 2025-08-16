@@ -22,7 +22,7 @@ module.exports.isLoggedIn = async (req, res, next) => {
 
     try {
       const decodedRefresh = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-      const user = await userModel.findOne({ email: decodedRefresh.email });
+      const user = await userModel.findOne({ email: decodedRefresh.email }).select("-password -refreshToken");
 
       if (!user || user.refreshToken !== refreshToken) {
         return res.status(403).json("Refresh token invalid or expired");
