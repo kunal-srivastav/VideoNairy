@@ -46,7 +46,7 @@ function App() {
     if(document.cookie){
       dispatch(currentUser());
     }
-  }, []);
+  }, [loggedInUser]);
 
   return (
     <div className="container-fluid">
