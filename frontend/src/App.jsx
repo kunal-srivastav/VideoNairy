@@ -60,7 +60,7 @@ function App() {
       <div className="d-flex flex-grow-1 overflow-hidden">
         {/* Sidebar */}
         {!hideLayout && loggedInUser && (
-          <div className="d-none d-md-flex flex-column bg-light p-2" style={{ width: '240px' }}>
+          <div className="d-none d-md-flex flex-column p-1" style={{ width: '180px' }}>
             <Sidebar />
           </div>
         )}
