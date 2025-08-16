@@ -54,18 +54,16 @@ const commentSlice = createSlice({
         .addCase(commentsOnPost.pending, handlePending)
         .addCase(commentsOnPost.fulfilled, (state, action) => {
             state.loading = false;
-            const { message, postComments, totalCommentsOnPost } = action.payload;
+            const { postComments, totalCommentsOnPost } = action.payload;
             state.postComments = postComments;
             state.totalCommentsOnPost = totalCommentsOnPost;
-            state.successMsg = message;
         })
         .addCase(commentsOnPost.rejected, handleOnRejected)
 
         .addCase(addCommentOnVideo.pending, handlePending)
         .addCase(addCommentOnVideo.fulfilled, (state, action) => {
             state.loading = false;
-            const { message, comment } = action.payload;
-            state.successMsg = message;
+            const { comment } = action.payload;
             state.comments = [comment, ...(state.comments || [])];
             state.totalComments += 1;
         })
@@ -74,8 +72,7 @@ const commentSlice = createSlice({
         .addCase(addCommentInPost.pending, handlePending)
         .addCase(addCommentInPost.fulfilled, (state, action) => {
             state.loading = false;
-            const { message, comment } = action.payload;
-            state.successMsg = message;
+            const { comment } = action.payload;
             state.postComments = [comment, ...(state.postComments || [])];
             state.totalCommentsOnPost += 1;
         })
@@ -84,7 +81,6 @@ const commentSlice = createSlice({
         .addCase(updateComment.pending, handlePending)
         .addCase(updateComment.fulfilled, (state, action) => {
             state.loading = false;
-            state.successMsg = action.payload.message;
             const updatedComment = action.payload.updatedComment;
             updateCommentInList(state.comments, updatedComment);
             updateCommentInList(state.postComments, updatedComment);
@@ -95,12 +91,11 @@ const commentSlice = createSlice({
         .addCase(deleteComment.pending, handlePending)
         .addCase(deleteComment.fulfilled, (state, action) => {
             state.loading = false;
-            const { message, commentId } = action.payload;
+            const { commentId } = action.payload;
             state.comments = state.comments.filter(comment => comment._id !== commentId);
             state.postComments = state.postComments.filter(comment => comment._id !== commentId);
             state.totalComments -= 1;
             state.totalCommentsOnPost -= 1;
-            state.successMsg = message;
         })
         .addCase(deleteComment.rejected, handleOnRejected)
     }

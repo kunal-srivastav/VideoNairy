@@ -28,8 +28,7 @@ const playlistSlice = createSlice({
         .addCase(addVideoInPlaylist.pending, handlePending)
         .addCase(addVideoInPlaylist.fulfilled, (state, action) => {
             state.loading = false;
-            const { addVideo, message } = action.payload;
-            state.successMsg = message;
+            const { addVideo } = action.payload;
             const playlist = state.playlists.find(p => p._id === addVideo?._id);
             if(playlist) {
             playlist.videos = addVideo.videos;
@@ -40,8 +39,7 @@ const playlistSlice = createSlice({
         .addCase(removeVideoInPlaylist.pending, handlePending)
         .addCase(removeVideoInPlaylist.fulfilled, (state, action) => {
             state.loading = false;
-            const { removedVideo, message } = action.payload;
-            state.successMsg = message;
+            const { removedVideo } = action.payload;
             const playlist = state.playlists.find(p => p._id === removedVideo._id);
             if(playlist){
                 playlist.videos = removedVideo.videos;
