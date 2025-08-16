@@ -43,7 +43,7 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    if(document.cookie){
+    if(loggedInUser){
       dispatch(currentUser());
     }
   }, [loggedInUser]);
