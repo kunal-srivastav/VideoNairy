@@ -43,9 +43,9 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    // if(document.cookie){
+    if(document.cookie){
       dispatch(currentUser());
-    // }
+    }
   }, []);
 
   return (
