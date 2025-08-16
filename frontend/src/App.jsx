@@ -29,6 +29,7 @@ function App() {
   const location = useLocation();
   const dispatch = useDispatch();
   const { loggedInUser } = useSelector(state => state.users);
+  const [userChecked, setUserChecked] = useState(false);
 
   const hideLayoutPaths = [
     "/users/login",
@@ -40,11 +41,15 @@ function App() {
 
   useEffect(() => {
     SetupInterceptor(dispatch);
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
-    dispatch(currentUser());
-  }, [dispatch]);
+    if (!userChecked) {
+      dispatch(currentUser())
+        .finally(() => setUserChecked(true));
+    }
+  }, [dispatch, userChecked]);
+
 
   return (
     <div className="container-fluid">
