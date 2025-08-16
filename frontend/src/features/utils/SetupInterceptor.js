@@ -27,15 +27,25 @@ export const SetupInterceptor = (dispatch) => {
       if (!error?.response) return Promise.reject(error);
 
       // Don't retry these URLs
-      if (["/users/login", "/users/register", "/users/refresh-token"]
-        .some(url => originalRequest.url?.includes(url))) {
+      if (
+        ["/users/login", "/users/register", "/users/refresh-token"].some((url) =>
+          originalRequest.url?.includes(url)
+        )
+      ) {
         return Promise.reject(error);
       }
 
       if (error.response.status === 401 && !originalRequest._retry) {
         if (isRefreshing) {
+          // Store the request for retry
           return new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
+            failedQueue.push({
+              resolve: () => {
+                originalRequest._retry = true;
+                resolve(axiosInstance(originalRequest));
+              },
+              reject,
+            });
           });
         }
 
@@ -44,8 +54,11 @@ export const SetupInterceptor = (dispatch) => {
 
         try {
           await dispatch(refreshToken()).unwrap(); // server sets new cookie
+
+          // Retry all queued requests
           failedQueue.forEach(({ resolve }) => resolve());
           failedQueue = [];
+
           return axiosInstance(originalRequest);
         } catch (err) {
           processQueue(err);
