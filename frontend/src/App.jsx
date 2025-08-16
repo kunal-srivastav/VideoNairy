@@ -23,6 +23,7 @@ import PlaylistPlayer from './pages/PlaylistPlayer';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import { currentUser } from './features/users/userThunks';
+import { SetupInterceptor } from './features/utils/SetupInterceptor';
 
 function App() {
   const location = useLocation();
@@ -38,6 +39,7 @@ function App() {
   const hideLayout = hideLayoutPaths.includes(location.pathname);
 
   useEffect(() => {
+    SetupInterceptor();
     dispatch(currentUser());
   }, [dispatch]);
 
