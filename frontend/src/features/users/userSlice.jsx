@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { changePassword, currentUser, createAccount, loginUser, logoutUser, userProfile, refreshToken, updateAccountDetails, userWatchHistory, updateUserImage } from "./userThunks"
+import { changePassword, currentUser, createAccount, loginUser, logoutUser, userProfile, updateAccountDetails, userWatchHistory, updateUserImage } from "./userThunks"
 import { handleOnRejected, handlePending, uiState } from "../utils/extraReducers";
 
 const userSlice = createSlice({
@@ -103,12 +103,6 @@ const userSlice = createSlice({
             state.loading = false;
         })
         .addCase(userWatchHistory.rejected, handleOnRejected)
-
-        .addCase(refreshToken.pending, handlePending)
-        .addCase(refreshToken.fulfilled, (state, action) => {
-            state.loading = false;
-        })
-        .addCase(refreshToken.rejected, handleOnRejected);
     }
 });
 
