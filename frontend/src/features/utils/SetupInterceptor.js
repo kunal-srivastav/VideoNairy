@@ -6,28 +6,18 @@ export const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-let isRefreshing = false;
-let failedQueue = [];
-
-const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
-};
+let interceptorSetup = false;
 
 export const SetupInterceptor = (dispatch) => {
+  if (interceptorSetup) return; // already setup
+  interceptorSetup = true;
+
   axiosInstance.interceptors.response.use(
     (res) => res,
     async (err) => {
       const originalRequest = err.config;
 
       if (err.response?.status === 401 && !originalRequest._retry) {
-        // Prevent retry loops
         if (originalRequest.url.includes("/users/refresh-token")) {
           dispatch(logoutUser());
           window.location.href = "/users/login";
@@ -35,7 +25,6 @@ export const SetupInterceptor = (dispatch) => {
         }
 
         if (isRefreshing) {
-          // Queue the request until refresh finishes
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           })
@@ -51,8 +40,8 @@ export const SetupInterceptor = (dispatch) => {
           isRefreshing = false;
 
           if (result.meta.requestStatus === "fulfilled") {
-            processQueue(null); // retry all queued requests
-            return axiosInstance(originalRequest); // retry original
+            processQueue(null);
+            return axiosInstance(originalRequest);
           } else {
             processQueue(result.error, null);
             dispatch(logoutUser());
