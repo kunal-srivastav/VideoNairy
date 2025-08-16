@@ -44,6 +44,7 @@ function App() {
 
   useEffect(() => {
     if(loggedInUser){
+      console.log(loggedInUser)
       dispatch(currentUser());
     }
   }, [dispatch]);
