@@ -3,18 +3,12 @@ import axios from "axios";
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true, // cookies are sent automatically
+  withCredentials: true, // cookies sent automatically
 });
 
 let isRefreshing = false;
-let failedQueue = [];
 let interceptorAttached = false;
 let hasRedirected = false;
-
-const processQueue = (error) => {
-  failedQueue.forEach(({ reject }) => reject(error));
-  failedQueue = [];
-};
 
 export const SetupInterceptor = (dispatch) => {
   if (interceptorAttached) return;
@@ -37,16 +31,8 @@ export const SetupInterceptor = (dispatch) => {
 
       if (error.response.status === 401 && !originalRequest._retry) {
         if (isRefreshing) {
-          // Store the request for retry
-          return new Promise((resolve, reject) => {
-            failedQueue.push({
-              resolve: () => {
-                originalRequest._retry = true;
-                resolve(axiosInstance(originalRequest));
-              },
-              reject,
-            });
-          });
+          // If a refresh is already in progress, just reject
+          return Promise.reject(error);
         }
 
         originalRequest._retry = true;
@@ -54,14 +40,8 @@ export const SetupInterceptor = (dispatch) => {
 
         try {
           await dispatch(refreshToken()).unwrap(); // server sets new cookie
-
-          // Retry all queued requests
-          failedQueue.forEach(({ resolve }) => resolve());
-          failedQueue = [];
-
-          return axiosInstance(originalRequest);
+          return axiosInstance(originalRequest); // retry this request
         } catch (err) {
-          processQueue(err);
           if (!hasRedirected) {
             hasRedirected = true;
             dispatch(logoutUser());
