@@ -40,8 +40,13 @@ function App() {
 
   useEffect(() => {
     SetupInterceptor(dispatch);
-    dispatch(currentUser());
   }, [dispatch]);
+
+  useEffect(() => {
+    if(document.cookie){
+      dispatch(currentUser());
+    }
+  }, []);
 
   return (
     <div className="container-fluid">
