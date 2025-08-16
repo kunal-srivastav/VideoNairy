@@ -25,8 +25,6 @@ import Sidebar from './components/Sidebar';
 import { currentUser } from './features/users/userThunks';
 import { SetupInterceptor } from './features/utils/SetupInterceptor';
 
-console.log(document.cookie);
-
 function App() {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -45,10 +43,7 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    if(loggedInUser){
-      console.log(loggedInUser)
-      dispatch(currentUser());
-    }
+    dispatch(currentUser());
   }, [dispatch]);
 
   return (
