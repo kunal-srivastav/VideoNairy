@@ -15,7 +15,7 @@ function Navbar() {
   const dispatch = useDispatch();
   const { loggedInUser } = useSelector(state => state.users);
 
-  const handleOnLogout = async () => {
+  const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
       navigate("/");
