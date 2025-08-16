@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
+import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Homepage from './pages/Homepage';
@@ -20,8 +23,6 @@ import UpdateAccount from './pages/UpdateAccount';
 import UpdateAccountPic from './pages/UpdateAccountPic';
 import PlaylistPlayer from './pages/PlaylistPlayer';
 
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
 import { currentUser } from './features/users/userThunks';
 import { SetupInterceptor } from './features/utils/SetupInterceptor';
 
@@ -39,64 +40,62 @@ function App() {
   ];
   const hideLayout = hideLayoutPaths.includes(location.pathname);
 
+  // Attach interceptor once
   useEffect(() => {
     SetupInterceptor(dispatch);
   }, []);
 
+  // Fetch current user once per refresh
   useEffect(() => {
     if (!userChecked) {
-      dispatch(currentUser())
-        .finally(() => setUserChecked(true));
+      dispatch(currentUser()).finally(() => setUserChecked(true));
     }
   }, [dispatch, userChecked]);
 
-
   return (
-    <div className="container-fluid">
-      <div className="row">
+    <div className="d-flex flex-column vh-100">
+      {/* Navbar */}
+      {!hideLayout && <Navbar />}
+
+      <div className="d-flex flex-grow-1 overflow-hidden">
+        {/* Sidebar */}
         {!hideLayout && loggedInUser && (
-          <div className="col-2 col-md-1 d-none d-sm-flex flex-column px-1" style={{ fontSize: "x-small" }}>
+          <div className="d-none d-md-flex flex-column bg-light p-2" style={{ width: '240px' }}>
             <Sidebar />
           </div>
         )}
 
-        <div className={!hideLayout && loggedInUser ? "col-12 col-sm-10 col-md-11" : "col-12"}>
-          {!hideLayout && <Navbar />}
-          <div className="p-1 p-md-0">
-            <Routes>
-              <Route path='/' element={<Homepage />} />
-                <Route path='/users'>
-                  <Route path='subscription' element={<Subscription />} />
-                  <Route path='change-password' element={<ChangePassword />} />
-                  <Route path='login' element={<Login />} />
-                  <Route path='register' element={<Register />} />
-                  <Route path="you" element={<Channel />} />
-                  <Route path="update-details" element={<UpdateAccount />} />
-                  <Route path="update-avatar" element={<UpdateAccountPic name={"avatar"} />} />
-                  <Route path="update-coverImage" element={<UpdateAccountPic name={"coverImage"} />} />
-                  <Route path="profile/:userName" element={<Profile />}>
-                    <Route index element={<ProfileVideos />} />
-                    <Route path="videos" element={<ProfileVideos />} />
-                    <Route path="playlists" element={<ProfilePlaylist />} />
-                    <Route path="posts" element={<ProfilePosts />} />
-                  </Route>
-                </Route>
-              <Route path="/videos">
-                <Route path="video/:videoId" element={<VideoDetail />} />
-                <Route path="upload" element={<VideoForm />} />
-                <Route path="update-video/:videoId" element={<VideoForm />} />
-              </Route>
-              <Route path="/posts">
-                <Route path="create" element={<PostForm />} />
-                <Route path="update/:postId" element={<PostForm />} />
-              </Route>
-              <Route path="/playlists">
-                <Route path="play/:playlistId" element={<PlaylistPlayer />} />
-                <Route path="create" element={<PlaylistForm />} />
-                <Route path="update-playlist/:playlistId" element={<PlaylistForm />} />
-              </Route>
-            </Routes>
-          </div>
+        {/* Main content */}
+        <div className="flex-grow-1 overflow-auto p-3" style={{ minWidth: 0 }}>
+          <Routes>
+            <Route path='/' element={<Homepage />} />
+            <Route path='/users/login' element={<Login />} />
+            <Route path='/users/register' element={<Register />} />
+            <Route path='/users/subscription' element={<Subscription />} />
+            <Route path='/users/change-password' element={<ChangePassword />} />
+            <Route path='/users/you' element={<Channel />} />
+            <Route path='/users/update-details' element={<UpdateAccount />} />
+            <Route path='/users/update-avatar' element={<UpdateAccountPic name="avatar" />} />
+            <Route path='/users/update-coverImage' element={<UpdateAccountPic name="coverImage" />} />
+            
+            <Route path='/users/profile/:userName' element={<Profile />}>
+              <Route index element={<ProfileVideos />} />
+              <Route path='videos' element={<ProfileVideos />} />
+              <Route path='playlists' element={<ProfilePlaylist />} />
+              <Route path='posts' element={<ProfilePosts />} />
+            </Route>
+
+            <Route path='/videos/video/:videoId' element={<VideoDetail />} />
+            <Route path='/videos/upload' element={<VideoForm />} />
+            <Route path='/videos/update-video/:videoId' element={<VideoForm />} />
+
+            <Route path='/posts/create' element={<PostForm />} />
+            <Route path='/posts/update/:postId' element={<PostForm />} />
+
+            <Route path='/playlists/play/:playlistId' element={<PlaylistPlayer />} />
+            <Route path='/playlists/create' element={<PlaylistForm />} />
+            <Route path='/playlists/update-playlist/:playlistId' element={<PlaylistForm />} />
+          </Routes>
         </div>
       </div>
     </div>
