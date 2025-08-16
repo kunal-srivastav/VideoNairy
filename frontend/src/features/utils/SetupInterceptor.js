@@ -3,18 +3,16 @@ import axios from "axios";
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true, // send cookies automatically
+  withCredentials: true, // cookies are sent automatically
 });
 
-let interceptorAttached = false;
 let isRefreshing = false;
 let failedQueue = [];
+let interceptorAttached = false;
+let hasRedirected = false;
 
-const processQueue = (error, token = null) => {
-  failedQueue.forEach(({ resolve, reject }) => {
-    if (error) reject(error);
-    else resolve(token);
-  });
+const processQueue = (error) => {
+  failedQueue.forEach(({ reject }) => reject(error));
   failedQueue = [];
 };
 
@@ -26,46 +24,36 @@ export const SetupInterceptor = (dispatch) => {
     (res) => res,
     async (error) => {
       const originalRequest = error.config;
+      if (!error?.response) return Promise.reject(error);
 
-      // If no server response
-      if (!error?.response) {
+      // Don't retry these URLs
+      if (["/users/login", "/users/register", "/users/refresh-token"]
+        .some(url => originalRequest.url?.includes(url))) {
         return Promise.reject(error);
       }
 
-      // 🚫 Skip certain URLs from triggering refresh
-      const skipUrls = [
-        "/users/login",
-        "/users/register",
-        "/users/refresh-token"
-      ];
-      if (skipUrls.some(url => originalRequest.url.includes(url))) {
-        return Promise.reject(error);
-      }
-
-      // Handle 401 Unauthorized and retry logic
       if (error.response.status === 401 && !originalRequest._retry) {
         if (isRefreshing) {
-          // Wait for refresh to finish, then retry
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
-          })
-            .then(() => axiosInstance(originalRequest))
-            .catch((err) => Promise.reject(err));
+          });
         }
 
         originalRequest._retry = true;
         isRefreshing = true;
 
         try {
-          console.log("🔄 Refreshing token...");
-          await dispatch(refreshToken()).unwrap();
-          processQueue(null);
+          await dispatch(refreshToken()).unwrap(); // server sets new cookie
+          failedQueue.forEach(({ resolve }) => resolve());
+          failedQueue = [];
           return axiosInstance(originalRequest);
         } catch (err) {
-          console.log("❌ Refresh token failed:", err);
           processQueue(err);
-          dispatch(logoutUser());
-          window.location.href = "/users/login";
+          if (!hasRedirected) {
+            hasRedirected = true;
+            dispatch(logoutUser());
+            window.location.href = "/users/login";
+          }
           return Promise.reject(err);
         } finally {
           isRefreshing = false;
