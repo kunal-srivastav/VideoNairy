@@ -87,7 +87,7 @@ module.exports.getVideoComments = async (req, res) => {
                 }
             }
         ]);
-        if(!videoComments.length) return res.status(200).json("No comments found for this video");
+        if(!videoComments.length) return res.status(404).json({message: "No comments found for this video"});
         return res
         .status(200)
         .json({
@@ -100,7 +100,7 @@ module.exports.getVideoComments = async (req, res) => {
             totalPages
         });
     } catch (error) {
-        return res.status(500).json(`Internal server error ${error.message}`);
+        return res.status(500).json({message: "Failed to fetch video comments"});
     }
 
 };
@@ -167,7 +167,7 @@ module.exports.getPostComments = async (req, res) => {
                 }
             }
         ]);
-        if(!postComments.length) return res.status(200).json("No comments found for this video");
+        if(!postComments.length) return res.status(404).json({message: "No comments found"});
         return res
         .status(200)
         .json({
@@ -177,7 +177,7 @@ module.exports.getPostComments = async (req, res) => {
             postId: req.params.postId,
         });
     } catch (err) {
-        return res.status(404).json("Post not found")
+        return res.status(500).json({message: "Post not found"})
     }
 };
 
