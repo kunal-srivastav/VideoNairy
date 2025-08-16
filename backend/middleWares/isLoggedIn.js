@@ -2,14 +2,35 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
 module.exports.isLoggedIn = async (req, res, next) => {
-    const {accessToken, refreshToken} = req.cookies;
-    if(!(req.cookies.accessToken || req.cookies.refreshToken)) return res.status(401).json("Unauthorized request");
-    try {
-        const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-        const user = await userModel.findOne({email: decodedToken.email}).select("-password -refreshToken");
-        req.user = user;
-        next();
-    } catch (error) {
-        return res.status(401).json("Session is expired. Please login");
+  const { accessToken, refreshToken } = req.cookies;
+
+  if (!accessToken && !refreshToken) {
+    return res.status(401).json("Unauthorized request");
+  }
+
+  try {
+    // Verify access token
+    const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    const user = await userModel.findOne({ email: decoded.email }).select("-password -refreshToken");
+    req.user = user;
+    return next();
+  } catch (err) {
+    // Access token expired, try refresh token
+    if (!refreshToken) {
+      return res.status(401).json("Session expired. Please login");
     }
-}
+
+    try {
+      const decodedRefresh = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+      const user = await userModel.findOne({ email: decodedRefresh.email });
+
+      if (!user || user.refreshToken !== refreshToken) {
+        return res.status(403).json("Refresh token invalid or expired");
+      }
+      req.user = user;
+      return next();
+    } catch (refreshErr) {
+      return res.status(403).json("Session expired. Please login");
+    }
+  }
+};
