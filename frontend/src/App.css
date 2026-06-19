@@ -1,3 +1,36 @@
+.navbar .btn,
+.dropdown-item,
+.navbar-brand,
+.rounded-circle {
+  transition: all 0.25s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #3a3a3a;
+  padding-left: 20px;
+}
+
+.navbar .btn:hover {
+  transform: translateY(-1px);
+}
+
+.navbar-brand:hover {
+  opacity: 0.9;
+}
+
+.rounded-circle:hover {
+  transform: scale(1.08);
+}
+
+.form-control:focus {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.dropdown-menu {
+  overflow: hidden;
+}
+
 .playlist-card .play-overlay {
   position: absolute;
   top: 0;
