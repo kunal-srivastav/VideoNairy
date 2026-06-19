@@ -1,54 +1,128 @@
-import { useEffect } from 'react'
-import { Link } from 'react-router-dom';
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { MdNotificationsActive } from "../assets/Icons";
-import { useDispatch, useSelector } from 'react-redux';
-import { subscribedChannels, toggleSubscription } from '../features/subscriptions/subscriptionThunks';
-import ManageAction from '../components/ManageAction';
+import { useDispatch, useSelector } from "react-redux";
+import {
+  subscribedChannels,
+  toggleSubscription,
+} from "../features/subscriptions/subscriptionThunks";
+import ManageAction from "../components/ManageAction";
 
 function Subscription() {
-
   const dispatch = useDispatch();
-  const { loading, subscriptions } = useSelector((state) => state.subscriptions);
 
-  useEffect(() => { 
+  const { loading, subscriptions } = useSelector(
+    (state) => state.subscriptions
+  );
+
+  useEffect(() => {
     dispatch(subscribedChannels());
-  }
-  ,[dispatch]);
+  }, [dispatch]);
 
   const handleOnToggleSubscription = async (channelId) => {
     await dispatch(toggleSubscription(channelId)).unwrap();
-  }
+  };
 
   return (
-  <div className='p-5 text-light'>
-    <h1 className='fw-bold ps-5'>All subscriptions</h1>
-    <div className="list-group container">
-    {subscriptions && subscriptions.length > 0 ? (
-      subscriptions.map(({channel}) => (
-        <div key={channel._id} className="list-group-item list-group-item-action d-flex gap-3 py-3">
-        <Link to={`/users/profile/${channel.userName}`} className="d-flex w-75 gap-3 text-decoration-none text-light">
-          <img src={channel?.avatar} alt=""  width="120" height="120" className="rounded-circle" />
-          <div className="mt-4 w-100">
-            <div className="col">
-              <h6 className="mb-0 text-dark">{channel?.fullName}</h6>
-              <p className="mb-0 text-muted opacity-75">{channel?.userName} • {channel?.subscriberCount} subscribers</p>
-            </div>
-          </div>
-        </Link>
-        <button className="btn btn-secondary mt-5 h-25" style={{ width: "150px" }} onClick={() => {handleOnToggleSubscription(channel._id)}} >
-            <MdNotificationsActive size={20} /> {channel.isSubscribed ? "Subscribed" : "Unsubscribed"}
-          </button>
-        </div>
-      ))
-    ) : (
-      !loading && <h2 className="text-center">You're not subscribed to any channel.</h2>
-    )}
+    <div className="container-fluid px-3 px-md-5 py-4 text-light">
+      <div className="mb-4">
+        <h2 className="fw-bold mb-1">Subscriptions</h2>
+        <p className="text-secondary mb-0">
+          Manage channels you follow
+        </p>
+      </div>
 
+      {subscriptions && subscriptions.length > 0 ? (
+        <div className="d-flex flex-column gap-3">
+          {subscriptions.map(({ channel }) => (
+            <div key={channel._id} className="card border-0 shadow-sm"
+              style={{
+                backgroundColor: "#212121",
+                borderRadius: "18px",
+              }}
+            >
+              <div className="card-body">
+                <div className="row align-items-center">
+                  <div className="col-lg-8">
+                    <Link to={`/users/profile/${channel.userName}`}
+                      className="text-decoration-none text-light"
+                    >
+                      <div className="d-flex align-items-center gap-3">
+                        <img src={channel?.avatar} alt={channel?.userName} width="90" height="90"
+                          className="rounded-circle"
+                          style={{
+                            objectFit: "cover",
+                            border: "3px solid #3ea6ff",
+                          }}
+                        />
+
+                        <div>
+                          <h5 className="mb-1 fw-semibold text-white">
+                            {channel?.fullName}
+                          </h5>
+
+                          <p className="mb-1 text-secondary">
+                            @{channel?.userName}
+                          </p>
+
+                          <small className="text-secondary">
+                            {channel?.subscriberCount} subscribers
+                          </small>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+
+                  <div className="col-lg-4 mt-3 mt-lg-0 text-lg-end">
+                    <button
+                      className={`btn ${
+                        channel.isSubscribed
+                          ? "btn-secondary"
+                          : "btn-outline-light"
+                      } rounded-pill px-4`}
+                      onClick={() =>
+                        handleOnToggleSubscription(channel._id)
+                      }
+                    >
+                      <MdNotificationsActive size={18} />{" "}
+                      {channel.isSubscribed
+                        ? "Subscribed"
+                        : "Subscribe"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        !loading && (
+          <div className="text-center d-flex flex-column justify-content-center align-items-center"
+            style={{ minHeight: "50vh" }}
+          >
+            <div
+              style={{
+                fontSize: "70px",
+                opacity: 0.4,
+              }}
+            >
+              📺
+            </div>
+
+            <h3 className="mt-3">
+              No subscriptions yet
+            </h3>
+
+            <p className="text-secondary">
+              Channels you subscribe to will appear here.
+            </p>
+          </div>
+        )
+      )}
+
+      <ManageAction loading={loading} />
     </div>
-    <ManageAction loading={loading} />
-  </div>
-  
-)
+  );
 }
 
 export default Subscription;

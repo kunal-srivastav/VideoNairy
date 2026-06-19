@@ -1,72 +1,107 @@
-import { Link } from 'react-router-dom'
-import {AiOutlineHome, AiOutlineYoutube, MdOutlineAccountCircle, IoReorderThreeOutline, GoVideo, MdHistory, MdOutlinePlaylistPlay} from "../assets/Icons"
-import { useSelector } from 'react-redux';
+import { Link } from "react-router-dom";
+import { AiOutlineHome, AiOutlineYoutube, MdOutlineAccountCircle, IoReorderThreeOutline, GoVideo,
+  MdHistory, MdOutlinePlaylistPlay } from "../assets/Icons";
+import { useSelector } from "react-redux";
 
 function Sidebar() {
-
-  const { loggedInUser } = useSelector(state => state.users);
+  const { loggedInUser } = useSelector((state) => state.users);
 
   return (
     <>
-    <Link className="text-decoration-none ms-4 ps-1 my-4" data-bs-toggle="offcanvas" to={"#offcanvasExample"} role="button" aria-controls="offcanvasExample">
-      <IoReorderThreeOutline size={32} color='white' />
-    </Link>
-
-  <div className="offcanvas offcanvas-start bg-dark text-light" style={{"width": "250px"}} tabIndex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-    <div className="offcanvas-header">
-      <h6 className="offcanvas-title d-flex" id="offcanvasExampleLabel"> 
-      <button type="button" className="btn p-0 mt-0" data-bs-dismiss="offcanvas" aria-label="Close">
-        <IoReorderThreeOutline size={30} color='white' />
+      {/* Mobile Menu Button */}
+      <button className="btn border-0 bg-transparent ms-3 mt-2" data-bs-toggle="offcanvas"
+        data-bs-target="#sidebarMenu" >
+        <IoReorderThreeOutline size={32} color="white" />
       </button>
-        <div className="ms-4 fw-bold">
-        <img src="/videoNairy_logo.png" width={30} alt="YouTube Logo" />
-        VideoNairy
-        <span className="position-relative pb-2 translate-middle badge text-secondary" style={{"fontSize": "x-small"}}>
-          IN
-        </span>
-        </div>
-      </h6>
-    </div>
-  <div className="offcanvas-body p-0">
-    <ul className='nav flex-column text-light fs-6'>
-      <li className='nav-item'> <Link className='nav-link mt-3 pb-0' to={"/"} ><AiOutlineHome size={25} color='white' /> <span className='ms-3 fs-6 text-light'> Home </span> </Link></li>
-      <hr />
-      <li> <Link  className='nav-link py-0' to={"/users/subscription"}><AiOutlineYoutube size={25} color='white' />  <span className='ms-3 text-light'> Subscription </span> </Link> </li>
-      <hr />
-      <li> <Link  className='nav-link py-0' to={"/users/you"}><MdHistory size={25} color='white' />  <span className='ms-3 text-light'> History </span> </Link></li>
-      <hr />
-      <li> <Link  className='nav-link py-0' to={`/users/profile/${loggedInUser?.userName}/playlists`}><MdOutlinePlaylistPlay size={25} color='white' />  <span className='ms-3 text-light'> Playlist </span> </Link></li>
-      <hr />
-      <li> <Link  className='nav-link py-0' to={`/users/profile/${loggedInUser?.userName}`}><GoVideo size={25} color='white' /> <span className='ms-3 text-light'> Your videos </span> </Link></li>
-    </ul>
-  </div>
-  </div>
 
-    <ul className="nav flex-column px-3" >
-      <li className="nav-item">
-        <Link to={"/"} className="nav-link my-3 active rounded-0" aria-current="page" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Home" data-bs-original-title="Home">
-        <AiOutlineHome color='white' size={27}  />
-        <br />
-        <small className='text-light'>Home</small>
-        </Link>
-      </li>
-      <li>
-        <Link to={"/users/subscription"} className="nav-link p-0 mb-3 rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Orders" data-bs-original-title="Orders">
-        <AiOutlineYoutube  color='white' className='ms-3' size={27} />
-        <br />
-        <small className='text-light ms-1'>Subscriptions</small>
-        </Link>
-      </li>
-      <li>
-        <Link to={"/users/you"} className="nav-link rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Products" data-bs-original-title="Products">
-        <MdOutlineAccountCircle color='white' size={27} />
-        <br />
-        <small className='text-light ms-1'>You</small>
-        </Link>
-      </li>
-    </ul>
+      {/* Mobile Sidebar */}
+      <div className="offcanvas offcanvas-start text-light" tabIndex="-1" id="sidebarMenu"
+        style={{
+          width: "280px",
+          backgroundColor: "#0f0f0f",
+        }}
+      >
+        <div className="offcanvas-header border-bottom border-secondary">
+          <div className="d-flex align-items-center">
+            <img src="/videoNairy_logo.png" alt="logo" width={35} className="me-2" />
+
+            <h5 className="mb-0 fw-bold">
+              VideoNairy
+              <small className="text-secondary ms-1" style={{ fontSize: "10px" }} >
+                IN
+              </small>
+            </h5>
+          </div>
+
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" />
+        </div>
+
+        <div className="offcanvas-body">
+          <ul className="nav flex-column gap-2">
+            <SidebarLink to="/" icon={<AiOutlineHome size={24} />} text="Home" />
+
+            <SidebarLink to="/users/subscription" icon={<AiOutlineYoutube size={24} />} text="Subscriptions" />
+
+            <SidebarLink to="/users/you" icon={<MdHistory size={24} />} text="History" />
+
+            <SidebarLink to={`/users/profile/${loggedInUser?.userName}/playlists`}
+              icon={<MdOutlinePlaylistPlay size={24} />} text="Playlists" />
+
+            <SidebarLink to={`/users/profile/${loggedInUser?.userName}`} icon={<GoVideo size={24} />}
+              text="Your Videos" />
+          </ul>
+        </div>
+      </div>
+
+      {/* Desktop Mini Sidebar */}
+      <aside className="d-none d-md-flex flex-column align-items-center pt-3"
+        style={{
+          width: "90px",
+          minHeight: "100vh",
+          backgroundColor: "#0f0f0f",
+          borderRight: "1px solid #272727",
+          position: "sticky",
+          top: 0,
+        }}
+      >
+        <DesktopLink to="/" icon={<AiOutlineHome size={28} />} text="Home" />
+
+        <DesktopLink to="/users/subscription" icon={<AiOutlineYoutube size={28} />} text="Subs" />
+
+        <DesktopLink to="/users/you" icon={<MdOutlineAccountCircle size={28} />} text="You" />
+      </aside>
     </>
-  )
+  );
+}
+
+/* Desktop Sidebar Item */
+function DesktopLink({ to, icon, text }) {
+  return (
+    <Link to={to}
+      className="text-decoration-none text-light d-flex flex-column align-items-center mb-4 p-2 rounded-3"
+      style={{
+        width: "75px",
+        transition: "0.3s",
+      }} >
+      {icon}
+      <small className="mt-2">{text}</small>
+    </Link>
+  );
+}
+
+/* Mobile Sidebar Item */
+function SidebarLink({ to, icon, text }) {
+  return (
+    <li>
+      <Link to={to} className="nav-link text-light d-flex align-items-center rounded-3 px-3 py-2"
+        style={{
+          transition: "0.3s",
+        }} >
+        {icon}
+        <span className="ms-3">{text}</span>
+      </Link>
+    </li>
+  );
 }
 
 export default Sidebar;

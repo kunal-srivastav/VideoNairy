@@ -1,12 +1,11 @@
-import { useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux';
-import { updateVideo, videoUpload } from '../features/videos/videoThunks';
-import { setError } from '../features/users/userSlice';
-import ManageAction from '../components/ManageAction';
+import { useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { updateVideo, videoUpload } from "../features/videos/videoThunks";
+import { setError } from "../features/users/userSlice";
+import ManageAction from "../components/ManageAction";
 
 function VideoForm() {
-
   const { videoId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -14,90 +13,221 @@ function VideoForm() {
   const thumbnailRef = useRef(null);
   const videoFileRef = useRef(null);
 
-  const [ formData, setFormData ] = useState({title: "", description: "", isPublished: true});
-  const { error, successMsg, loading } = useSelector(state => state.videos);
-  const { user } = useSelector(state => state.users);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null);
+  const [videoName, setVideoName] = useState("");
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    isPublished: true,
+  });
+
+  const { error, successMsg, loading } = useSelector(
+    (state) => state.videos
+  );
+
+  const { user } = useSelector((state) => state.users);
 
   const handleOnChange = (e) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({
-          ...prev, [name]: value
-      }))
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-const handleOnVideo = async (e) => {
-  e.preventDefault();
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
 
-  const videoData = new FormData();
+    if (!file) return;
 
-  if (thumbnailRef.current?.files[0]) {
-    videoData.append("thumbnail", thumbnailRef.current.files[0]);
-  }
+    setThumbnailPreview(URL.createObjectURL(file));
+  };
 
-  if (!videoId && videoFileRef.current?.files[0]) {
-    videoData.append("videoFile", videoFileRef.current.files[0]);
-  }
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
 
-  videoData.append("title", formData.title);
-  videoData.append("description", formData.description);
-  videoData.append("isPublished", formData.isPublished);
+    if (!file) return;
 
-  try {
-    if (videoId) {
-      await dispatch(updateVideo({ videoData, videoId })).unwrap();
-    } else {
-      await dispatch(videoUpload(videoData)).unwrap();
+    setVideoPreview(URL.createObjectURL(file));
+    setVideoName(file.name);
+  };
+
+  const handleOnVideo = async (e) => {
+    e.preventDefault();
+
+    const videoData = new FormData();
+
+    if (thumbnailRef.current?.files[0]) {
+      videoData.append(
+        "thumbnail",
+        thumbnailRef.current.files[0]
+      );
     }
 
-    setFormData({ title: "", description: "", isPublished: true });
-    if (thumbnailRef.current) thumbnailRef.current.value = null;
-    if (videoFileRef.current) videoFileRef.current.value = null;
+    if (!videoId && videoFileRef.current?.files[0]) {
+      videoData.append(
+        "videoFile",
+        videoFileRef.current.files[0]
+      );
+    }
 
-    setTimeout(() => {
+    videoData.append("title", formData.title);
+    videoData.append("description", formData.description);
+    videoData.append("isPublished", formData.isPublished);
+
+    try {
+      if (videoId) {
+        await dispatch(
+          updateVideo({
+            videoData,
+            videoId,
+          })
+        ).unwrap();
+      } else {
+        await dispatch(videoUpload(videoData)).unwrap();
+      }
+
+      setFormData({
+        title: "",
+        description: "",
+        isPublished: true,
+      });
+
+      setThumbnailPreview(null);
+      setVideoPreview(null);
+      setVideoName("");
+
+      if (thumbnailRef.current)
+        thumbnailRef.current.value = null;
+
+      if (videoFileRef.current)
+        videoFileRef.current.value = null;
+
+      setTimeout(() => {
         navigate(`/users/profile/${user?.userName}`);
-    }, 2000)
-  } catch (err) {
-    dispatch(setError(err?.message || "Video not uploaded"));
-  }
-};
+      }, 2000);
+    } catch (err) {
+      dispatch(setError(err?.message || "Video not uploaded"));
+    }
+  };
 
   return (
-    <div className="d-flex justify-content-center mt-4">
-        <form onSubmit={handleOnVideo} className="p-4 p-md-5 border rounded-3 bg-body-tertiary">
-            <div className="input-group mb-3">
-                <input type="file" accept='image/*' className="form-control" ref={thumbnailRef} name="thumbnail" id="inputGroupFile01" />
-            </div>
-            {!videoId && (
-                <div className="input-group mb-3">
-                    <input type="file" className="form-control" ref={videoFileRef} name="coverImage" id="inputGroupFile02" />
-                </div>
-            )}
-            <div className="form-floating mb-3">
-                <input type="text" className="form-control" value={formData.title} onChange={handleOnChange} name="title" id="floatingText" placeholder="title" />
-                <label htmlFor="floatingText">Title</label>
-            </div>
-            <div className="form-floating mb-3">
-                <textarea type="text" className="form-control" value={formData.description} onChange={handleOnChange} name="description" id="floatingText2" placeholder="description" />
-                <label htmlFor="floatingText2">Description</label>
-            </div>
-            <div className="form-check mb-3">
-                <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={formData.isPublished}
-                    onChange={(e) => setFormData(prev => ({ ...prev, isPublished: e.target.checked }))}
-                    id="isPublishedCheckbox"
+    <div className="container py-5">
+      <div className="card bg-dark text-light border-0 shadow-lg mx-auto"
+        style={{
+          maxWidth: "900px",
+          borderRadius: "20px",
+        }}
+      >
+        <div className="card-body p-4 p-md-5">
+          <h2 className="fw-bold text-center mb-4">
+            {videoId ? "Update Video" : "Upload Video"}
+          </h2>
+
+          <form onSubmit={handleOnVideo}>
+            {/* Thumbnail */}
+
+            <div className="mb-4">
+              <label className="form-label fw-semibold">
+                Thumbnail
+              </label>
+
+              <input type="file" accept="image/*" ref={thumbnailRef} className="form-control"
+                onChange={handleThumbnailChange} />
+
+              {thumbnailPreview && (
+                <img src={thumbnailPreview} alt="Thumbnail Preview" className="img-fluid rounded mt-3"
+                  style={{
+                    maxHeight: "250px",
+                    objectFit: "cover",
+                  }}
                 />
-                <label className="form-check-label" htmlFor="isPublishedCheckbox">
-                    Publish Now
-                </label>
+              )}
             </div>
 
-            <button className="w-100 btn mt-2 btn-lg btn-primary" disabled={loading} type="submit">{videoId? "Update" : "Create"}</button>
-            <ManageAction error={error} successMsg={successMsg} loading={loading} />
-        </form>
+            {/* Video */}
+
+            {!videoId && (
+              <div className="mb-4">
+                <label className="form-label fw-semibold">
+                  Video File
+                </label>
+
+                <input type="file" accept="video/*" ref={videoFileRef} className="form-control"
+                  onChange={handleVideoChange} />
+
+                {videoPreview && (
+                  <div className="mt-3">
+                    <video controls width="100%"
+                      style={{
+                        maxHeight: "350px",
+                        borderRadius: "12px",
+                      }}
+                    >
+                      <source src={videoPreview} />
+                    </video>
+
+                    <p className="text-secondary mt-2 mb-0">
+                      {videoName}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Title */}
+
+            <div className="form-floating mb-3">
+              <input type="text" className="form-control bg-secondary border-0 text-white"
+                name="title" value={formData.title} onChange={handleOnChange} placeholder="Title" />
+              <label>Video Title</label>
+            </div>
+
+            {/* Description */}
+
+            <div className="form-floating mb-4">
+              <textarea className="form-control bg-secondary border-0 text-white"
+                style={{ height: "140px" }} name="description" value={formData.description}
+                onChange={handleOnChange} placeholder="Description" />
+              <label>Description</label>
+            </div>
+
+            {/* Publish */}
+
+            <div className="form-check form-switch mb-4">
+              <input className="form-check-input" type="checkbox" checked={formData.isPublished}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isPublished: e.target.checked,
+                  }))
+                }
+              />
+
+              <label className="form-check-label">
+                Publish Immediately
+              </label>
+            </div>
+
+            {/* Submit */}
+
+            <button type="submit" disabled={loading} className="btn btn-danger w-100 py-3 fw-bold" >
+              {loading
+                ? "Processing..."
+                : videoId
+                ? "Update Video"
+                : "Upload Video"}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <ManageAction error={error} successMsg={successMsg} loading={loading} />
     </div>
-  )
+  );
 }
 
 export default VideoForm;

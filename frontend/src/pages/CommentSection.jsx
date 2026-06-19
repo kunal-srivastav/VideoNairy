@@ -76,23 +76,33 @@ function CommentSection({postId, sortBy, setSortBy, page, setPage}) {
   return (
     <div>
     <div className="text-light">
-    <h5 className='mt-2 mb-0'>{numberOfComments? `${numberOfComments} Comments` : "No Comment Found" }</h5>
+    <h5 className='fw-bold text-light mb-4'>{numberOfComments? `${numberOfComments} Comments` : "No Comment Found" }</h5>
 
 
     {/* Comment input */}
 
     <div className="card card-body bg-transparent border-0">
-      <div className="d-flex mb-3">
-          <img src={loggedInUser?.avatar || "/profilePic.jpg"} alt="User" className="rounded-circle me-2" width={40} height={40} />
-          <div>
-              <h6 className="mb-1">{loggedInUser?.userName}</h6>
-              <textarea className='form-control bg-dark text-light' value={commentContent}
-              onChange={(e) => {setCommentContent(e.target.value)}} rows={2} placeholder='Add a comment...' ></textarea>
-              <div className="mt-2 text-end">
-                <button className="btn btn-sm btn-secondary" onClick={() => {setCommentContent(""), setIsEditingCommentId(null)}}>Cancel</button>
-                <button className="btn btn-sm btn-light ms-2" onClick={handleOnCommentBtn} >{isEditingCommentId ? "Update" : "Comment"}</button>
-              </div>
-          </div>
+      <div className="d-flex gap-3 mb-4 p-3 rounded-4"
+      style={{
+      backgroundColor: "#1f1f1f",
+      border: "1px solid #333",
+      }}
+>
+        <img src={loggedInUser?.avatar || "/profilePic.jpg"} alt="User" className="rounded-circle me-2" width={40} height={40} />
+        <div>
+            <h6 className="mb-1">{loggedInUser?.userName}</h6>
+            <textarea className='form-control border-0 shadow-none text-light'  style={{
+            backgroundColor: "#2a2a2a",
+            borderRadius: "15px",
+            resize: "none"
+            }} 
+            value={commentContent}
+            onChange={(e) => {setCommentContent(e.target.value)}} rows={2} placeholder='Add a comment...' ></textarea>
+            <div className="mt-2 text-end">
+              <button className="btn btn-sm btn-secondary" onClick={() => {setCommentContent(""), setIsEditingCommentId(null)}}>Cancel</button>
+              <button className="btn btn-primary btn-sm ms-2 px-3 rounded-pill" onClick={handleOnCommentBtn} >{isEditingCommentId ? "Update" : "Comment"}</button>
+            </div>
+        </div>
       </div>
       
       {!postId && numberOfComments && (
@@ -146,11 +156,19 @@ function CommentSection({postId, sortBy, setSortBy, page, setPage}) {
     <div className="mt-3 ms-3">
       {commentList && (
        commentList?.map((comment) => (
-        <div className="d-flex mx-1 mb-3" key={comment._id}>
-          <img src={comment?.owner?.avatar} alt="User" className="rounded-circle me-2"
-            width={40} height={40} />
+        <div className="d-flex gap-3 p-3 mb-3 rounded-4" key={comment._id} style={{ backgroundColor: "#1f1f1f",
+          border: "1px solid #2f2f2f" }}>
+          <img src={comment?.owner?.avatar} alt="User" className="rounded-circle flex-shrink-0"
+          width={45} height={45}
+          style={{
+          objectFit: "cover"
+          }} />
           <div>
-            <h6 className="mb-1">{comment?.owner?.userName}<small className="text-secondary ms-2">{formatTimeFromNow(comment?.createdAt)}</small></h6>
+            <h6 className="mb-1 fw-semibold text-light">{comment?.owner?.userName}<small className="ms-2"
+              style={{ fontSize: "12px", color: "#9e9e9e" }}>
+                {formatTimeFromNow(comment?.createdAt)}
+                </small>
+            </h6>
             <p className="mb-0 text-white">{comment?.content}</p>
             <button
               onClick={() => {handleOnLikeComment(comment._id)}}
@@ -162,10 +180,10 @@ function CommentSection({postId, sortBy, setSortBy, page, setPage}) {
           </div>
           <div className="dropdown ms-5">
             <button
-              className="btn rounded-circle p-1 px-2 ms-3"
+              className="btn btn-dark rounded-pill d-flex align-items-center gap-2 px-3 py-1"
               data-bs-toggle="dropdown"
               aria-expanded="false"
-              style={{ backgroundColor: "#2c2c2c", border: "none" }}  >
+              style={{ backgroundColor: "#2a2a2a", border: "none" }}  >
               <BsThreeDotsVertical size={18} color="white" />
             </button>
             <ul className="dropdown-menu dropdown-menu-dark">
