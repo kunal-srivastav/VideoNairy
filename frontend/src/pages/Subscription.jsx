@@ -6,7 +6,6 @@ import {
   subscribedChannels,
   toggleSubscription,
 } from "../features/subscriptions/subscriptionThunks";
-import ManageAction from "../components/ManageAction";
 
 function Subscription() {
   const dispatch = useDispatch();
@@ -120,7 +119,6 @@ function Subscription() {
         )
       )}
 
-      <ManageAction loading={loading} />
     </div>
   );
 }

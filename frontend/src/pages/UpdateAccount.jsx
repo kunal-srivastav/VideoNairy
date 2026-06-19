@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setError } from "../features/users/userSlice";
 import { updateAccountDetails } from "../features/users/userThunks";
 import { useNavigate } from "react-router-dom";
-import ManageAction from "../components/ManageAction";
 
 function UpdateAccount() {
   const [formData, setFormData] = useState({
@@ -152,7 +151,6 @@ function UpdateAccount() {
           </form>
         </div>
 
-        <ManageAction error={error} successMsg={successMsg} loading={loading} />
       </div>
     </div>
   );

@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { setError } from "../features/users/userSlice";
 import { createPost, updatePost } from "../features/posts/postThunks";
-import ManageAction from "../components/ManageAction";
 
 const PostForm = () => {
   const { postId } = useParams();
@@ -196,7 +195,6 @@ const PostForm = () => {
         </div>
       </div>
 
-      <ManageAction error={error} successMsg={successMsg} loading={loading} />
     </div>
   );
 };

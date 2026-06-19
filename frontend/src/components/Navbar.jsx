@@ -1,14 +1,5 @@
-import {
-  TbPasswordUser,
-  FaUserAlt,
-  IoCreateOutline,
-  IoIosAdd,
-  IoIosSearch,
-  IoIosLogOut,
-  MdOutlineAccountCircle,
-  MdOutlinePlaylistAdd,
-  CiYoutube
-} from "../assets/Icons";
+import { TbPasswordUser, FaUserAlt, IoCreateOutline, IoIosAdd, IoIosSearch, IoIosLogOut,
+  MdOutlineAccountCircle, MdOutlinePlaylistAdd, CiYoutube } from "../assets/Icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setError } from "../features/users/userSlice";

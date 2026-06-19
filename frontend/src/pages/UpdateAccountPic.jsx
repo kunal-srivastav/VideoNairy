@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateUserImage } from "../features/users/userThunks";
 import { setError } from "../features/users/userSlice";
 import { useNavigate } from "react-router-dom";
-import ManageAction from "../components/ManageAction";
 
 function UpdateAccountPic({ name }) {
   const fileInputRef = useRef(null);
@@ -182,7 +181,6 @@ function UpdateAccountPic({ name }) {
           )}
         </div>
 
-        <ManageAction error={error} successMsg={successMsg} loading={loading} />
       </div>
     </div>
   );

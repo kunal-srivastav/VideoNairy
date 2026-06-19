@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { setError } from "../features/users/userSlice";
 import { changePassword } from "../features/users/userThunks";
 import { useDispatch, useSelector } from "react-redux";
-import ManageAction from "../components/ManageAction";
 
 function ChangePassword() {
   const navigate = useNavigate();
@@ -45,8 +44,7 @@ function ChangePassword() {
   };
 
   return (
-    <div
-      className="container-fluid d-flex justify-content-center align-items-center"
+    <div className="container-fluid d-flex justify-content-center align-items-center"
       style={{ minHeight: "100vh" }}
     >
       <div
@@ -101,7 +99,6 @@ function ChangePassword() {
             </button>
           </form>
 
-          <ManageAction error={error} successMsg={successMsg} loading={loading} />
         </div>
       </div>
     </div>
