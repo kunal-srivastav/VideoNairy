@@ -22,6 +22,7 @@ import PlaylistPlayer from './pages/PlaylistPlayer';
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import "./App.css";
 import { currentUser } from './features/users/userThunks';
 import { SetupInterceptor } from './features/utils/SetupInterceptor';
 
