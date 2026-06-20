@@ -132,7 +132,7 @@ function Homepage() {
       {videos?.length > 0 && (
         <div className="d-flex justify-content-center mt-5">
           <nav>
-            <ul className="pagination pagination-lg">
+            <ul className="pagination pagination-sm">
 
               <li className="page-item">
                 <button className="page-link bg-dark text-light border-secondary"
