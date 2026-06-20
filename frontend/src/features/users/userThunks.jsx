@@ -7,7 +7,8 @@ export const currentUser = createAsyncThunk("/users/current-user",
             const res = await axiosInstance.get(`/users/current-user`);
             return res.data.user;
         } catch (err) {
-            return rejectWithValue(err?.response?.data?.message || "Failed to fetch current user");
+            console.log("Failed to fetch current user");
+            // return rejectWithValue(err?.response?.data?.message || "Failed to fetch current user");
         }
     }
 );
