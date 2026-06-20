@@ -67,7 +67,7 @@ function Channel() {
             />
 
             <div>
-              <h2 className="fw-bold mb-1">
+              <h2 className="fw-bold text-light mb-1">
                 {loggedInUser?.fullName ||
                   "Unknown User"}
               </h2>
