@@ -115,7 +115,7 @@ function Profile() {
 
               <div className="flex-grow-1 text-center text-md-start">
 
-                <h2 className="fw-bold mb-1">
+                <h2 className="fw-bold mb-1 text-light">
                   {user?.fullName}
                 </h2>
 
