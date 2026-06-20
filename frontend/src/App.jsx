@@ -73,7 +73,7 @@ function App() {
               minHeight: "100vh",
               position: "sticky",
               top: 0,
-              zIndex: 100,
+              zIndex: 2000,
             }}
           >
             <Sidebar />
