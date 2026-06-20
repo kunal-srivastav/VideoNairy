@@ -150,7 +150,7 @@ function PlaylistForm() {
           </form>
         </div>
       </div>
-
+      <ManageAction error={error} successMsg={successMsg} loading={loading} />
     </div>
   );
 }

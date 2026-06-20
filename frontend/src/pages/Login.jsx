@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { setError } from "../features/users/userSlice";
 import { loginUser, currentUser } from "../features/users/userThunks";
+import ManageAction from "../components/ManageAction";
 
 function Login() {
   const navigate = useNavigate();
@@ -179,6 +180,7 @@ function Login() {
           By clicking Sign In, you agree to the terms of use.
         </small>
       </form>
+      <ManageAction error={error} successMsg={successMsg} loading={loading} />
     </div>
   );
 }

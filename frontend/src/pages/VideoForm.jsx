@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { updateVideo, videoUpload } from "../features/videos/videoThunks";
 import { setError } from "../features/users/userSlice";
+import ManageAction from "../components/ManageAction";
 
 function VideoForm() {
   const { videoId } = useParams();
@@ -223,7 +224,7 @@ function VideoForm() {
           </form>
         </div>
       </div>
-
+     <ManageAction error={error} successMsg={successMsg} loading={loading} />
     </div>
   );
 }

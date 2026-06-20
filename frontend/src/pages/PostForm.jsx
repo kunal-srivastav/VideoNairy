@@ -194,7 +194,7 @@ const PostForm = () => {
           )}
         </div>
       </div>
-
+     <ManageAction error={error} successMsg={successMsg} loading={loading} />
     </div>
   );
 };

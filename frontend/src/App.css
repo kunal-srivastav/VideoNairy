@@ -147,3 +147,10 @@ a {
 .playlist-card:hover .play-overlay {
   opacity: 1;
 }
+
+.multiLineTruncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

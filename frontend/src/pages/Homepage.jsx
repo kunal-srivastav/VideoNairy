@@ -7,8 +7,8 @@ import { formatTimeFromNow } from "../features/utils/formatTimeFromNow";
 
 function Homepage() {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
+
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortType, setSortType] = useState("desc");
@@ -16,163 +16,166 @@ function Homepage() {
   const { videos, totalPages } = useSelector((state) => state.videos);
 
   useEffect(() => {
-    dispatch(videosFetched({ page, sortBy, sortType })).unwrap();
+    dispatch(videosFetched({ page, sortBy, sortType }));
   }, [dispatch, page, sortBy, sortType]);
 
   const handleOnVideo = (videoId) => {
     navigate(`/videos/video/${videoId}`);
   };
 
-  const handleSortBy = (e) => {
-    setSortBy(e.target.value);
-    setPage(1);
-  };
-
   return (
-    <div className="py-3">
-      <div className="container-fluid px-2 px-md-4">
-        {videos?.length > 0 && (
-          <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-            <div className="btn-group" role="group">
-              <input type="radio" className="btn-check" name="btnradio" id="btnradio1" value="createdAt"
-                autoComplete="off" checked={sortBy === "createdAt"} onChange={handleSortBy}
-              />
+    <div className="container-fluid py-4"
+      style={{
+        background: "#0f0f0f",
+        minHeight: "100vh",
+      }}
+    >
+      {/* Filters */}
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div className="d-flex gap-2">
+          <button
+            className={`btn rounded-pill px-4 ${
+              sortBy === "createdAt"
+                ? "btn-light text-dark"
+                : "btn-dark text-light"
+            }`}
+            onClick={() => {
+              setSortBy("createdAt");
+              setPage(1);
+            }}
+          >
+            Latest
+          </button>
 
-              <label className="btn btn-outline-secondary rounded-pill" htmlFor="btnradio1" >
-                Latest
-              </label>
-
-              <input type="radio" className="btn-check" name="btnradio" id="btnradio2" value="views"
-                autoComplete="off" checked={sortBy === "views"} onChange={handleSortBy} />
-
-              <label className="btn btn-outline-secondary rounded-pill" htmlFor="btnradio2" >
-                Most Viewed
-              </label>
-            </div>
-
-            <select className="form-select bg-dark text-light border-secondary"
-              style={{
-                width: "160px",
-              }} value={sortType} onChange={(e) => { setSortType(e.target.value); }} >
-              <option value="desc">Descending</option>
-              <option value="asc">Ascending</option>
-            </select>
-          </div>
-        )}
-
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-          {videos &&
-            videos.map((video) => (
-              <div className="col" key={video._id}>
-                <div className="card bg-transparent border-0 text-light h-100"
-                  style={{
-                    cursor: "pointer",
-                    transition: "all .2s ease",
-                  }}
-                >
-                  <div className="overflow-hidden rounded-4"
-                    onClick={() => {
-                      handleOnVideo(video._id);
-                    }}
-                  >
-                    <img src={video.thumbnail} alt="Video thumbnail" className="card-img-top"
-                      style={{
-                        aspectRatio: "16/9",
-                        objectFit: "cover",
-                        transition: "transform .3s ease",
-                      }}
-                    />
-                  </div>
-
-                  <div className="card-body px-1 py-3">
-                    <div className="d-flex align-items-start">
-                      <Link to={`/users/profile/${video?.owner?.userName}`} >
-                        <img src={video?.owner?.avatar} className="rounded-circle" width={40}
-                          height={40} alt="profile pic"
-                          style={{
-                            objectFit: "cover",
-                          }}
-                        />
-                      </Link>
-
-                      <div className="ms-3">
-                        <p className={`${styles.multiLineTruncate} fw-semibold mb-1`}
-                          style={{
-                            lineHeight: "1.4",
-                            fontSize: "0.95rem",
-                          }}
-                        >
-                          {video?.title}
-                        </p>
-
-                        <p className="mb-0 text-secondary"
-                          style={{
-                            fontSize: ".85rem",
-                          }}
-                        >
-                          {video?.owner?.userName}
-                        </p>
-
-                        <small className="text-secondary"
-                          style={{
-                            fontSize: ".8rem",
-                          }}
-                        >
-                          {video.views} views •{" "}
-                          {formatTimeFromNow(video.createdAt)}
-                        </small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <button
+            className={`btn rounded-pill px-4 ${
+              sortBy === "views"
+                ? "btn-light text-dark"
+                : "btn-dark text-light"
+            }`}
+            onClick={() => {
+              setSortBy("views");
+              setPage(1);
+            }}
+          >
+            Trending
+          </button>
         </div>
+
+        <select className="form-select border-0 text-light"
+          style={{
+            width: "170px",
+            background: "#1f1f1f",
+            borderRadius: "12px",
+          }}
+          value={sortType}
+          onChange={(e) => setSortType(e.target.value)}
+        >
+          <option value="desc">Newest First</option>
+          <option value="asc">Oldest First</option>
+        </select>
       </div>
 
+      {/* Video Grid */}
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        {videos?.map((video) => (
+          <div className="col" key={video._id}>
+            <div className="h-100" style={{ cursor: "pointer" }} >
+              {/* Thumbnail */}
+              <div className="position-relative overflow-hidden"
+                style={{ borderRadius: "16px" }} onClick={() => handleOnVideo(video._id)} >
+                <img src={video.thumbnail} alt={video.title} className="w-100"
+                  style={{
+                    aspectRatio: "16/9",
+                    objectFit: "cover",
+                    transition: "0.35s ease",
+                    borderRadius: "16px",
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.05)")
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                />
+              </div>
+
+              {/* Video Info */}
+              <div className="d-flex mt-3">
+                <Link to={`/users/profile/${video?.owner?.userName}`}>
+                  <img src={video?.owner?.avatar} alt="avatar" width={42} height={42}
+                    className="rounded-circle" style={{ objectFit: "cover" }} />
+                </Link>
+
+                <div className="ms-3 flex-grow-1">
+                  <h6 className={`${styles.multiLineTruncate} text-light fw-semibold mb-1`}
+                    style={{ lineHeight: "1.4", }} >
+                    {video.title}
+                  </h6>
+
+                  <small className="d-block" style={{ color: "#aaaaaa" }} >
+                    {video.owner?.userName}
+                  </small>
+
+                  <small style={{ color: "#888" }} >
+                    {video.views.toLocaleString()} views •{" "}
+                    {formatTimeFromNow(video.createdAt)}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pagination */}
       {videos?.length > 0 && (
-        <nav className="d-flex justify-content-center mt-4" aria-label="Pagination" >
-          <ul className="pagination">
-            <li className="page-item">
-              <button
-                onClick={() => {
-                  setPage(page - 1);
-                }}
-                disabled={page === 1}
-                className="page-link"
-              >
-                &laquo;
-              </button>
-            </li>
+        <div className="d-flex justify-content-center mt-5">
+          <nav>
+            <ul className="pagination pagination-lg">
 
-            {Array.from({ length: totalPages }, (_, i) => {
-              const pageNumber = i + 1;
-
-              return (
-                <li key={pageNumber}
-                  className={`page-item ${
-                    pageNumber === page ? "active" : ""
-                  }`}
+              <li className="page-item">
+                <button className="page-link bg-dark text-light border-secondary"
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
                 >
-                  <button className="page-link" onClick={() => setPage(pageNumber)} >
-                    {pageNumber}
-                  </button>
-                </li>
-              );
-            })}
+                  ←
+                </button>
+              </li>
 
-            <li className="page-item">
-              <button className="page-link"
-                onClick={() => {
-                  setPage(page + 1);
-                }}
-                disabled={page === totalPages}
-              >
-                &raquo;
-              </button>
-            </li>
-          </ul>
-        </nav>
+              {Array.from({ length: totalPages }, (_, i) => {
+                const pageNumber = i + 1;
+
+                return (
+                  <li key={pageNumber}
+                    className={`page-item ${
+                      pageNumber === page ? "active" : ""
+                    }`}
+                  >
+                    <button className={`page-link ${
+                        pageNumber === page
+                          ? "bg-danger border-danger"
+                          : "bg-dark text-light border-secondary"
+                      }`}
+                      onClick={() => setPage(pageNumber)}
+                    >
+                      {pageNumber}
+                    </button>
+                  </li>
+                );
+              })}
+
+              <li className="page-item">
+                <button className="page-link bg-dark text-light border-secondary" disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                >
+                  →
+                </button>
+              </li>
+
+            </ul>
+          </nav>
+        </div>
       )}
     </div>
   );

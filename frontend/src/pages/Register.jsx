@@ -3,10 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setError } from "../features/users/userSlice";
-import {
-  createAccount,
-  currentUser,
-} from "../features/users/userThunks";
+import { createAccount, currentUser } from "../features/users/userThunks";
+import ManageAction from "../components/ManageAction";
 
 function Register() {
   const navigate = useNavigate();
@@ -305,6 +303,7 @@ function Register() {
           {loading ? "Creating Account..." : "Sign Up"}
         </button>
       </form>
+      <ManageAction error={error} successMsg={successMsg} loading={loading} />
     </div>
   );
 }
