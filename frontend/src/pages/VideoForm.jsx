@@ -90,11 +90,7 @@ function VideoForm() {
         await dispatch(videoUpload(videoData)).unwrap();
       }
 
-      setFormData({
-        title: "",
-        description: "",
-        isPublished: true,
-      });
+      setFormData({ title: "", description: "", isPublished: true });
 
       setThumbnailPreview(null);
       setVideoPreview(null);
@@ -116,112 +112,172 @@ function VideoForm() {
 
   return (
     <div className="container py-5">
-      <div className="card bg-dark text-light border-0 shadow-lg mx-auto"
+      <div
+        className="card border-0 mx-auto"
         style={{
-          maxWidth: "900px",
-          borderRadius: "20px",
-        }}
-      >
-        <div className="card-body p-4 p-md-5">
-          <h2 className="fw-bold text-center mb-4">
+          maxWidth: "1400px",
+          background: "#181818",
+          borderRadius: "24px",
+          overflow: "hidden",
+          boxShadow: "0 10px 40px rgba(0,0,0,.35)",
+        }} >
+        <div className="p-4 border-bottom border-secondary">
+          <h2 className="fw-bold text-white mb-1">
             {videoId ? "Update Video" : "Upload Video"}
           </h2>
 
-          <form onSubmit={handleOnVideo}>
-            {/* Thumbnail */}
+          <p className="text-secondary mb-0">
+            Upload and manage your content
+          </p>
+        </div>
 
-            <div className="mb-4">
-              <label className="form-label fw-semibold">
-                Thumbnail
+        <div className="row g-4 p-4">
+          {/* LEFT SIDE */}
+          <div className="col-lg-8">
+            {!videoId && (
+              <div className="p-4 rounded-4 mb-4"
+                style={{
+                  background: "#202020",
+                  border: "1px solid #303030",
+                }} >
+                <h5 className="text-white mb-3"> Video Upload </h5>
+
+                <label style={{cursor: "pointer"}} className="d-block text-center p-5 rounded-4 border border-info" >
+                  <div style={{ fontSize: "70px" }} > 🎬 </div>
+
+                  <h5 className="text-white mt-3"> Upload Video </h5>
+
+                  <p className="text-secondary"> Click to select a video </p>
+
+                  <input hidden type="file" accept="video/*" ref={videoFileRef} onChange={handleVideoChange} />
+                </label>
+
+                {videoPreview && (
+                  <div className="mt-4">
+                    <video controls width="100%"
+                      style={{
+                        borderRadius: "16px",
+                        maxHeight: "500px",
+                      }}
+                    >
+                      <source src={videoPreview} />
+                    </video>
+
+                    <div className="mt-2 text-secondary"> {videoName} </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="p-4 rounded-4"
+              style={{
+                background: "#202020",
+                border: "1px solid #303030",
+              }}
+            >
+              <div className="mb-4">
+                <label className="form-label text-white"> Video Title </label>
+
+                <input type="text" className="form-control" name="title" value={formData.title}
+                  onChange={handleOnChange} placeholder="Add a title"
+                  style={{
+                    background: "#121212",
+                    border: "1px solid #303030",
+                    color: "white",
+                    height: "60px",
+                    borderRadius: "14px",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="form-label text-white"> Description </label>
+
+                <textarea className="form-control" name="description" value={formData.description}
+                  onChange={handleOnChange} placeholder="Tell viewers about your video"
+                  style={{
+                    background: "#121212",
+                    border: "1px solid #303030",
+                    color: "white",
+                    minHeight: "220px",
+                    borderRadius: "14px",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT SIDE */}
+          <div className="col-lg-4">
+            <div className="p-4 rounded-4 mb-4"
+              style={{
+                background: "#202020",
+                border: "1px solid #303030",
+              }} >
+              <h5 className="text-white mb-3"> Thumbnail </h5>
+
+              <label className="d-block text-center p-4 rounded-4 border border-info"
+                style={{ cursor: "pointer" }} >
+                <div style={{ fontSize: "50px" }}> 🖼️ </div>
+
+                <div className="text-white mt-2">
+                  Upload Thumbnail
+                </div>
+
+                <input hidden type="file" accept="image/*" ref={thumbnailRef} onChange={handleThumbnailChange}/>
               </label>
 
-              <input type="file" accept="image/*" ref={thumbnailRef} className="form-control"
-                onChange={handleThumbnailChange} />
-
               {thumbnailPreview && (
-                <img src={thumbnailPreview} alt="Thumbnail Preview" className="img-fluid rounded mt-3"
+                <img src={thumbnailPreview} alt="Thumbnail" className="w-100 mt-3"
                   style={{
-                    maxHeight: "250px",
+                    borderRadius: "14px",
+                    aspectRatio: "16/9",
                     objectFit: "cover",
                   }}
                 />
               )}
             </div>
 
-            {/* Video */}
+            <div className="p-4 rounded-4 mb-4"
+              style={{
+                background: "#202020",
+                border: "1px solid #303030",
+              }} >
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className="text-white mb-1"> Visibility </h6>
 
-            {!videoId && (
-              <div className="mb-4">
-                <label className="form-label fw-semibold">
-                  Video File
-                </label>
+                  <small className="text-secondary"> Publish immediately </small>
+                </div>
 
-                <input type="file" accept="video/*" ref={videoFileRef} className="form-control"
-                  onChange={handleVideoChange} />
-
-                {videoPreview && (
-                  <div className="mt-3">
-                    <video controls width="100%"
-                      style={{
-                        maxHeight: "350px",
-                        borderRadius: "12px",
-                      }}
-                    >
-                      <source src={videoPreview} />
-                    </video>
-
-                    <p className="text-secondary mt-2 mb-0">
-                      {videoName}
-                    </p>
-                  </div>
-                )}
+                <div className="form-check form-switch">
+                  <input className="form-check-input" type="checkbox" checked={formData.isPublished}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        isPublished: e.target.checked,
+                      }))
+                    }
+                  />
+                </div>
               </div>
-            )}
-
-            {/* Title */}
-
-            <div className="form-floating mb-3">
-              <input type="text" className="form-control bg-secondary border-0 text-white"
-                name="title" value={formData.title} onChange={handleOnChange} placeholder="Title" />
-              <label>Video Title</label>
             </div>
 
-            {/* Description */}
-
-            <div className="form-floating mb-4">
-              <textarea className="form-control bg-secondary border-0 text-white"
-                style={{ height: "140px" }} name="description" value={formData.description}
-                onChange={handleOnChange} placeholder="Description" />
-              <label>Description</label>
-            </div>
-
-            {/* Publish */}
-
-            <div className="form-check form-switch mb-4">
-              <input className="form-check-input" type="checkbox" checked={formData.isPublished}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    isPublished: e.target.checked,
-                  }))
-                }
-              />
-
-              <label className="form-check-label">
-                Publish Immediately
-              </label>
-            </div>
-
-            {/* Submit */}
-
-            <button type="submit" disabled={loading} className="btn btn-danger w-100 py-3 fw-bold" >
+            <button type="submit" disabled={loading} className="btn w-100 fw-bold py-3"
+              style={{
+                background: "#3ea6ff",
+                border: "none",
+                color: "#fff",
+                borderRadius: "14px",
+                fontSize: "16px",
+              }} >
               {loading
                 ? "Processing..."
                 : videoId
                 ? "Update Video"
                 : "Upload Video"}
             </button>
-          </form>
+          </div>
         </div>
       </div>
      <ManageAction error={error} successMsg={successMsg} loading={loading} />
